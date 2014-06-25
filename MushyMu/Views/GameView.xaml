@@ -1,0 +1,27 @@
+﻿<UserControl x:Class="MushyMu.Views.GameView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:model="clr-namespace:MushyMu.Model"
+        xmlns:ignore="http://www.ignore.com"
+        mc:Ignorable="d ignore"
+        >
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="100" />
+        </Grid.RowDefinitions>
+        <RichTextBox x:Name="tbOutputArea" IsReadOnly="True" Background="Black" Foreground="LightGray" VerticalScrollBarVisibility="Auto"
+                 AcceptsReturn="True" VerticalContentAlignment="Top">
+            
+        </RichTextBox>
+        <TextBox x:Name="tbInputArea" Text="{Binding MushTextInput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Background="Black" 
+                 Foreground="LightGray" Grid.Row="1" VerticalContentAlignment="Top" AcceptsReturn="True">
+            <TextBox.InputBindings>
+                <KeyBinding Key="Enter" Command="{Binding SubmitTextEnterKeyCommand}" />
+            </TextBox.InputBindings>
+        </TextBox>
+    </Grid>
+</UserControl>
