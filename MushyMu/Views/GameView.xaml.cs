@@ -7,6 +7,7 @@ using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
+using System.Windows.Input;
 using System.Windows.Media;
 
 namespace MushyMu.Views
@@ -25,8 +26,17 @@ namespace MushyMu.Views
         public GameView()
         {
             InitializeComponent();
+            
         }
 
-        
+        private void fdrOutputArea_RequestBringIntoView(object sender, RequestBringIntoViewEventArgs e)
+        {
+            ScrollBar.ScrollToEnd();
+        }
+
+        private void tbInputArea_Loaded(object sender, RoutedEventArgs e)
+        {
+            Keyboard.Focus(tbInputArea);
+        }
     }
 }

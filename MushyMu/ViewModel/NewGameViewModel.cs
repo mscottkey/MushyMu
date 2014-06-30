@@ -1,6 +1,7 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
+using Microsoft.Practices.ServiceLocation;
 using MushyMu.Model;
 using System;
 using System.Collections.Generic;
@@ -8,6 +9,7 @@ using System.IO;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Xml;
+using System.Xml.Linq;
 
 namespace MushyMu.ViewModel
 {
@@ -26,17 +28,64 @@ namespace MushyMu.ViewModel
 
         public RelayCommand QuickNewGameConnect { get; private set; }
         public RelayCommand<Game> OpenGameCommand { get; private set; }
+        public RelayCommand SaveGameCommand { get; private set; }
         
         public NewGameViewModel()
         {
             QuickNewGameConnect = new RelayCommand(() => ExecuteQuickNewGameConnect());
             OpenGameCommand = new RelayCommand<Game>((g) => ExecuteOpenGameCommand(g));
+            SaveGameCommand = new RelayCommand(() => ExecuteSaveGameCommand());
+        }
+
+        private void ExecuteSaveGameCommand()
+        {
+            //Check to see if Quick connect settings have been filled out
+            if (_quickConnectName != null & _quickConnectHost != null & _quickConnectPort != null)
+            {
+                string gamesXMLpath = @"C:\ProgramData\MushyMu\MushyMuSettings.xml";
+
+                XDocument document = XDocument.Load(gamesXMLpath);
+                
+                document.Element("root").Element("games").Add(new XElement("game",
+                new XElement("name", _quickConnectName),
+                new XElement("host", _quickConnectHost),
+                new XElement("port", _quickConnectPort)));
+
+                document.Save(gamesXMLpath);
+
+                _games = ListGames();
+                RaisePropertyChanged("Games");
+
+                _quickConnectName = null;
+                _quickConnectHost = null;
+                _quickConnectPort = null;
+                RaisePropertyChanged("QuickConnectName");
+                RaisePropertyChanged("QuickConnectHost");
+                RaisePropertyChanged("QuickConnectPort");
+
+                Messenger.Default.Send(new NotificationMessage("DialogSaveComplete"));
+
+
+            }
+            else
+            {
+                Messenger.Default.Send(new NotificationMessage("DialogIncompleteConnectionInformation"));
+                
+            }
+
         }
 
         private void ExecuteQuickNewGameConnect()
         {
-            var msg = new Game() { Name = "Test", Host = "Test", Port = 1111, ID = Guid.NewGuid()};
-            Messenger.Default.Send<Game>( msg, "StartGame");
+            if (_quickConnectName == null && _quickConnectHost == null && _quickConnectPort == null)
+            {
+                Messenger.Default.Send(new NotificationMessage("DialogIncompleteCnnectionInformation"));
+            }
+            else
+            {
+                var msg = new Game() { Name = _quickConnectName, Host = _quickConnectHost, Port = Convert.ToInt32(_quickConnectPort), ID = Guid.NewGuid() };
+                Messenger.Default.Send<Game>(msg, "StartGame");
+            }
         }
 
         private void ExecuteOpenGameCommand(Game g)
@@ -44,7 +93,44 @@ namespace MushyMu.ViewModel
             var msg = new Game() { Name = g.Name, Host = g.Host, Port = g.Port, ID = Guid.NewGuid() };
             Messenger.Default.Send<Game>(msg, "StartGame");
         }
+        
+        // QuickConnect and Save field properties
+        private string _quickConnectName;
 
+        public string QuickConnectName
+        {
+            get { return _quickConnectName; }
+            set 
+            { 
+                _quickConnectName = value;
+                RaisePropertyChanged("QuickConnectName");
+            }
+        }
+
+        private string _quickConnectHost;
+
+        public string QuickConnectHost
+        {
+            get { return _quickConnectHost; }
+            set 
+            { 
+                _quickConnectHost = value;
+                RaisePropertyChanged("QuickConnectHost");
+            }
+        }
+
+        private string _quickConnectPort;
+
+        public string QuickConnectPort
+        {
+            get { return _quickConnectPort; }
+            set 
+            { 
+                _quickConnectPort = value;
+                RaisePropertyChanged("QuickConnectPort");
+            }
+        }
+        
         // Generate List of Games from the settings XML file in Program Data.
         // May need to handle putting this in AppData or Documents instead for easier access.
 
@@ -80,6 +166,7 @@ namespace MushyMu.ViewModel
             set
             {
                 _games = value;
+                RaisePropertyChanged("Games");
             }
            
         }
