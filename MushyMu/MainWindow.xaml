@@ -31,10 +31,11 @@
                 <ListBox x:Name="lbxConnectedGames" Background="Black" Grid.Column="1" BorderThickness="1" VerticalContentAlignment="Top"
                  ItemsSource="{Binding GameVMList}" DisplayMemberPath="MushName"  SelectedIndex="{Binding SelectedGame, Mode=TwoWay}"/>
             </Controls:Flyout>
-            <Controls:Flyout Header="Common Commands" x:Name="CommonCmds" Position="Right" Width="250"
+            <Controls:Flyout Header="Common Commands" x:Name="CommonCmds" Position="Right" Width="300"
                              IsOpen="{Binding CommonCmdsFlyOutState, Mode=TwoWay}">
                 <ListBox x:Name="lbxCommonCmds" Background="Black" Grid.Column="1" BorderThickness="1" VerticalContentAlignment="Top"
-                 ItemsSource="{Binding GameCommands}" SelectedIndex="{Binding SelectedCmd, Mode=TwoWay}"/>
+                 ItemsSource="{Binding Path=GameCommands}" SelectedItem="{Binding SelectedCmd, Mode=TwoWay}" DisplayMemberPath="Name"
+                         IsSynchronizedWithCurrentItem="True" FontSize="20" FontWeight="ExtraLight"/>
             </Controls:Flyout>
         </Controls:FlyoutsControl>
     </Controls:MetroWindow.Flyouts>

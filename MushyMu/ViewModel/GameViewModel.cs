@@ -37,6 +37,7 @@ namespace MushyMu.ViewModel
         public RelayCommand SubmitTextEnterKeyCommand { get; private set; }
         public RelayCommand SwitchGamesFlyOut { get; private set; }
         public RelayCommand CommonCmdsFlyOut { get; private set; }
+        public RelayCommand SearchText { get; private set; }
         private TcpClient _client;
         private Thread _thread;
         public NetworkStream _stream;
@@ -45,24 +46,57 @@ namespace MushyMu.ViewModel
         public TelnetParser _telnetParser;
         public int TimeOutMs = 100;
         private byte[] buffer = new byte[2500];
+        
         //a parser/decoder for ANSI control sequences, to give text color and potentially other styling
         ANSIColorParser ansiColorParser = new ANSIColorParser();
+        
         // Create FlowDocument Output
         FlowDocument output = new FlowDocument();
 
         //incoming message callback and handler definition
-        public event serverMessageEventHandler serverMessage;
-        public delegate void serverMessageEventHandler(List<AnsiTextRun> runs);
+        //public event serverMessageEventHandler serverMessage;
+        //public delegate void serverMessageEventHandler(List<AnsiTextRun> runs);
 
         public GameViewModel(string token)
         {
             Token = token;
             Messenger.Default.Register<Game>(this, token, (_game) => StartNewGame(_game));
-            //MessengerInstance.Register<Game>(this, )
+            Messenger.Default.Register<MuCommand>(this, "SelectedCmd" ,(_cmd) => SubmitCommand(_cmd));
+            
             SubmitTextEnterKeyCommand = new RelayCommand(() => ExecuteSubmitTextEnterKeyCommand());
             SwitchGamesFlyOut = new RelayCommand(() => ExecuteSwitchGamesFlyOut());
             CommonCmdsFlyOut = new RelayCommand(() => ExecuteCommonCmdsFlyOut());
+            SearchText = new RelayCommand(() => ExecuteSearchText());
+            output.IsEnabled = true;
+            
 
+        }
+
+        private void ExecuteSearchText()
+        {
+            if (_searchValue != null)
+            {
+                //Do some stuff here
+            }
+            else
+            {
+                //Do nothing because there is nothing to search for
+            }
+        }
+
+        private void SubmitCommand(MuCommand _cmd)
+        {
+            if (_cmd.SubmitOnSelect == true)
+            {
+                Send(_cmd.Name);
+            }
+            else
+            {
+                _mushTextInput = _cmd.Name;
+                RaisePropertyChanged("MushTextInput");
+            }
+
+            Messenger.Default.Send(new NotificationMessage("ResetTextBoxFocus"));
         }
 
         private void ExecuteCommonCmdsFlyOut()
@@ -149,7 +183,19 @@ namespace MushyMu.ViewModel
                 RaisePropertyChanged("MushName");
             }
         }
-        
+
+        private string _searchValue;
+        public string SearchValue
+        {
+            get { return _searchValue; }
+            set
+            {
+                if (value == _searchValue)
+                    return;
+                _searchValue = value;
+                RaisePropertyChanged("SearchValue");
+            }
+        }
 
         private object ExecuteSubmitTextEnterKeyCommand()
         {

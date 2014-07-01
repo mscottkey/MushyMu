@@ -29,12 +29,20 @@ namespace MushyMu
                     case "DialogSaveComplete":
                         ShowSaveCompleteDialog();
                         break;
+                    case "ResetSelectedCommand":
+                        ResetSelectedCommand();
+                        break;
 
                     default:
                         break;
 
                 }
             });
+        }
+
+        private void ResetSelectedCommand()
+        {
+            lbxCommonCmds.UnselectAll();
         }
 
         private async void ShowSaveCompleteDialog()

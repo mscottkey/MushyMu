@@ -20,24 +20,7 @@ namespace MushyMu.ViewModel
             /// Changes to that property's value raise the PropertyChanged event. 
             /// </summary>
             
-            public GameViewModel CurrentGame
-            {
-                get
-                {
-                    if (_currentGame == null)
-                    {
-                        _currentGame = new GameViewModel(Token);
-                    }
-                    return _currentGame;
-                }
-                set
-                {
-                    if (_currentGame == value)
-                        return;
-                    _currentGame = value;
-                    RaisePropertyChanged("CurrentGame");
-                }
-            }
+            
 
             private ObservableCollection<Game> _gameList = new ObservableCollection<Game>();
             public ObservableCollection<Game> GameList
@@ -83,7 +66,7 @@ namespace MushyMu.ViewModel
             /// </summary>
             public GameContainerViewModel()
             {
-                Messenger.Default.Register<Game>(this, "StartGame", (_game) => ReceiveNewGame(_game));
+                //Messenger.Default.Register<Game>(this, "StartGame", (_game) => ReceiveNewGame(_game));
                 //RaisePropertyChanged("GameList");
                 //RaisePropertyChanged("GameVMList");
 
@@ -96,10 +79,15 @@ namespace MushyMu.ViewModel
                 
                 //Send out game info, then generate the View Model
                 Token = Guid.NewGuid().ToString();
+
                 _currentGame = new GameViewModel(Token);
+
                 Messenger.Default.Send<Game>(_game, Token);
-                RaisePropertyChanged("CurrentGame");
+                //RaisePropertyChanged("CurrentGame");
+
                 
+                RaisePropertyChanged("CurrentGamePropertyName");
+
                 // Add this game to the List
                 _gameList.Add(_game);
                 RaisePropertyChanged("GameList");
@@ -107,6 +95,7 @@ namespace MushyMu.ViewModel
                 RaisePropertyChanged("GameVMList");
                 _selectedGame = GameVMList.Count - 1;
                 RaisePropertyChanged("SelectedGame");
+                RaisePropertyChanged("CurrentGame");
                 
                 // Send out messages to generate the game information and then switch tabs.
                
@@ -127,7 +116,27 @@ namespace MushyMu.ViewModel
 
                 //Selection changed, switch view to that VM
                 _currentGame = GetSelectedGameByID(_selectedGame);
-                RaisePropertyChanged("CurrentGame");
+                RaisePropertyChanged("CurrentGamePropertyName");
+            }
+        }
+
+        public const string CurrentGamePropertyName = "CurrentGame";
+        public GameViewModel CurrentGame
+        {
+            get
+            {
+                //if (_currentGame == null)
+                //{
+                //    _currentGame = new GameViewModel(Token);
+                //}
+                return _currentGame;
+            }
+            set
+            {
+                if (_currentGame == value)
+                    return;
+                _currentGame = value;
+                RaisePropertyChanged(() => "CurrentGamePropertyName");
             }
         }
 

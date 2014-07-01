@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using GalaSoft.MvvmLight.Threading;
 using System.Windows.Media;
-using Elysium;
+
 
 
 namespace MushyMu
@@ -17,9 +17,9 @@ namespace MushyMu
             DispatcherHelper.Initialize();
         }
 
-        private void StartupHandler(object sender, System.Windows.StartupEventArgs e)
-        {
-            Elysium.Manager.Apply(this, Elysium.Theme.Dark, Brushes.DarkRed, Brushes.Black);
-        }
+        //private void StartupHandler(object sender, System.Windows.StartupEventArgs e)
+        //{
+        //    Elysium.Manager.Apply(this, Elysium.Theme.Dark, Brushes.DarkRed, Brushes.Black);
+        //}
     }
 }

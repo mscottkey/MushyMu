@@ -4,21 +4,55 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:model="clr-namespace:MushyMu.Model"
+        xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        xmlns:MuBox="clr-namespace:MushyMu.Controls"
         xmlns:ignore="http://www.ignore.com"
         mc:Ignorable="d ignore"
-        >
+        d:DesignHeight="600" d:DesignWidth="800">
 
-    <Grid>
+    <Grid x:Name="InputOutputGrid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="100" />
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="80*" />
+            <RowDefinition Height="20*" />
         </Grid.RowDefinitions>
-        <RichTextBox x:Name="tbOutputArea" IsReadOnly="True" Background="Black" Foreground="LightGray" VerticalScrollBarVisibility="Auto"
-                 AcceptsReturn="True" VerticalContentAlignment="Top">
+
+        <Grid Grid.Row="0" Background="Black">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="250" />
+                <ColumnDefinition Width="50" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="60"/>
+                <ColumnDefinition Width="60"/>
+            </Grid.ColumnDefinitions>
+                <TextBox Grid.Column="0" x:Name="tbName" Controls:TextboxHelper.ClearTextButton="True" FontFamily="Arial" FontSize="20" Height="40" 
+                     VerticalAlignment="Center" VerticalContentAlignment="Center" Visibility="Visible" HorizontalAlignment="Left"
+                     BorderBrush="Black"  Width="250" Margin="0,0,0,0" Controls:TextboxHelper.Watermark="Search text..." Text="{Binding SearchValue, Mode=TwoWay}"/>
+                <Button Grid.Column="1" Content="L" FontFamily="Webdings" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" 
+                    FontSize="30" Height="50" Width="50" Margin="0,0,0,0" Command="{Binding SearchText}" 
+                    Style="{DynamicResource MetroCircleButtonStyle}" />
+
+            <Button Grid.Column="3" Content="."  FontFamily="Wingdings 2" FontSize="30" Command="{Binding Path=SwitchGamesFlyOut}"
+                        HorizontalAlignment="Right" Height="50" Width="50" Margin="0,0,0,0" HorizontalContentAlignment="Center"
+                        Style="{DynamicResource MetroCircleButtonStyle}" VerticalContentAlignment="Center" Padding="0,0,0,7"/>
+            <Button Grid.Column="4" Content="º"  FontFamily="Symbol" FontSize="30" Command="{Binding Path=CommonCmdsFlyOut}"
+                        HorizontalAlignment="Right" Height="50" Width="50" Margin="0,0,0,0" HorizontalContentAlignment="Center"
+                        Style="{DynamicResource MetroCircleButtonStyle}" VerticalContentAlignment="Center" Padding="0,0,0,7"/>
+                
             
-        </RichTextBox>
-        <TextBox x:Name="tbInputArea" Text="{Binding MushTextInput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Background="Black" 
-                 Foreground="LightGray" Grid.Row="1" VerticalContentAlignment="Top" AcceptsReturn="True">
+        </Grid>
+        <!--<ScrollViewer Name="ScrollBar" IsEnabled="True" PanningMode="VerticalOnly" VerticalScrollBarVisibility="Auto" Grid.Row="1">-->
+            <MuBox:MuBox Grid.Row="1" Background="Black" VerticalContentAlignment="Top" Foreground="LightGray"
+                            VerticalAlignment="Stretch" Document="{Binding MushTextStream, Mode=OneWay}" x:Name="fdrOutputArea"
+                            VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Hidden" IsSelectionEnabled="True"
+                            IsHitTestVisible="True" RequestBringIntoView="fdrOutputArea_RequestBringIntoView" IsEnabled="True">
+            </MuBox:MuBox>
+        <!--</ScrollViewer>-->
+
+        <TextBox x:Name="tbInputArea" Grid.Row="3" Text="{Binding MushTextInput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                Background="Black" TextWrapping="WrapWithOverflow" FocusManager.FocusedElement="{Binding ElementName=tbInputArea}"
+                Focusable="True" Foreground="LightGray" VerticalContentAlignment="Top" AcceptsReturn="True" 
+                 Loaded="tbInputArea_Loaded" FontFamily="Courier New" FontSize="12" TabIndex="1">
             <TextBox.InputBindings>
                 <KeyBinding Key="Enter" Command="{Binding SubmitTextEnterKeyCommand}" />
             </TextBox.InputBindings>

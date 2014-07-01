@@ -4,20 +4,26 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d"
+             xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
              DataContext="{Binding GameContainer, Source={StaticResource Locator}}"
-             d:DesignHeight="300" d:DesignWidth="300">
-    <Grid>
+             Height="Auto" Width="Auto"
+             d:DesignHeight="600" d:DesignWidth="1200">
+    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="150"/>
+            <ColumnDefinition Width="85*"/>
+            <!--<ColumnDefinition Width="15*"/>-->
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="150"/>
+            <RowDefinition Height="449*"/>
+            <RowDefinition Height="151*"/>
         </Grid.RowDefinitions>
-        <ContentControl Content="{Binding CurrentGame, Mode=TwoWay}" Grid.Column="0" Grid.RowSpan="2" />
-        <ListBox x:Name="lbxConnectedGames" Background="Black" Grid.Column="1" BorderThickness="1" VerticalContentAlignment="Top"
+
+        <Controls:TransitioningContentControl Content="{Binding CurrentGame, Mode=OneWay}" Grid.Column="0" Grid.RowSpan="2" 
+                                              VerticalContentAlignment="Stretch" 
+                                              HorizontalContentAlignment="Stretch" VerticalAlignment="Stretch" 
+                                              HorizontalAlignment="Stretch" />
+        <!--<ListBox x:Name="lbxConnectedGames" Background="Black" Grid.Column="1" BorderThickness="1" VerticalContentAlignment="Top"
                  ItemsSource="{Binding GameVMList}" DisplayMemberPath="MushName"  SelectedIndex="{Binding SelectedGame, Mode=TwoWay}"/>
-        <ListBox x:Name="lbxGameCommands" Background="Black" Grid.Column="1" Grid.Row="1" BorderThickness="1" ItemsSource="{Binding GameCommands}" VerticalContentAlignment="Top"/>
+        <ListBox x:Name="lbxGameCommands" Background="Black" Grid.Column="1" Grid.Row="1" BorderThickness="1" ItemsSource="{Binding GameCommands}" VerticalContentAlignment="Top"/>-->
     </Grid>
 </UserControl>

@@ -82,15 +82,14 @@ namespace MushyMu.ViewModel
             }
         }
 
-        string[] commands = { "WHO", "+where", "pose", "say", "@emit", "+pub", "+new" };
-        private ObservableCollection<string> _gameCommands = null;
-        public ObservableCollection<string> GameCommands
+        private ObservableCollection<MuCommand> _gameCommands = new CommandList();
+        public ObservableCollection<MuCommand> GameCommands
         {
             get
             {
                 if (_gameCommands == null)
                 {
-                    _gameCommands = new ObservableCollection<string>(commands);
+                    _gameCommands = new CommandList();
                 }
                 return _gameCommands;
             }
@@ -267,23 +266,30 @@ namespace MushyMu.ViewModel
             }
         }
 
-        private int _selectedCmd;
-        public int SelectedCmd
+        private MuCommand _selectedCmd = null;
+        public MuCommand SelectedCmd
         {
             get { return _selectedCmd; }
             set
             {
-                if (value == _selectedCmd)
-                    return;
-                _selectedCmd = value;
-                RaisePropertyChanged("SelectedCmd");
-                SubmitSelectedCmd(_selectedCmd);
+                //if (value == _selectedCmd)
+                //    _selectedCmd = value;
+                //RaisePropertyChanged("SelectedCmd");
+
+                SubmitSelectedCmd(value);
+                _selectedCmd = null;
             }
         }
 
-        private void SubmitSelectedCmd(int _selectedCmd)
+        private void SubmitSelectedCmd(MuCommand _selectedCmd)
         {
-            throw new NotImplementedException();
+            var cmd = _gameCommands[_selectedCmd.ID];
+            Messenger.Default.Send<MuCommand>(cmd, "SelectedCmd");
+            _commonCmdsFlyOutState = false;
+            RaisePropertyChanged("CommonCmdsFlyOutState");
+            //_selectedCmd = null;
+            RaisePropertyChanged("SelectedCmd");
+            Messenger.Default.Send(new NotificationMessage("ResetSelectedCommand"));
         }
 
         public GameViewModel CurrentGame

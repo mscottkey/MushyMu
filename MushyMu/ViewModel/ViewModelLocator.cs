@@ -40,8 +40,8 @@ namespace MushyMu.ViewModel
 
             SimpleIoc.Default.Register<MainViewModel>();
             SimpleIoc.Default.Register<NewGameViewModel>();
-            SimpleIoc.Default.Register<GameContainerViewModel>();
-            SimpleIoc.Default.Register<GameViewModel>();
+            //SimpleIoc.Default.Register<GameContainerViewModel>();
+            //SimpleIoc.Default.Register<GameViewModel>();
         }
 
         /// <summary>
@@ -67,13 +67,13 @@ namespace MushyMu.ViewModel
             }
         }
 
-        public GameContainerViewModel GameContainer
-        {
-            get
-            {
-                return ServiceLocator.Current.GetInstance<GameContainerViewModel>();
-            }
-        }
+        //public GameContainerViewModel GameContainer
+        //{
+        //    get
+        //    {
+        //        return ServiceLocator.Current.GetInstance<GameContainerViewModel>();
+        //    }
+        //}
 
         public GameViewModel Game
         {

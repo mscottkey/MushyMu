@@ -26,17 +26,38 @@ namespace MushyMu.Views
         public GameView()
         {
             InitializeComponent();
+            Messenger.Default.Register<NotificationMessage>(this, (message) =>
+            {
+                switch (message.Notification)
+                {
+                    case "ResetTextBoxFocus":
+                        ResetTextBoxFocus();
+                        break;
+
+                    default:
+                        break;
+                }
+            });
             
         }
 
+        private void ResetTextBoxFocus()
+        {
+            Keyboard.Focus(tbInputArea);
+            tbInputArea.Select(tbInputArea.Text.Length, 0);
+        }
+
+
         private void fdrOutputArea_RequestBringIntoView(object sender, RequestBringIntoViewEventArgs e)
         {
-            ScrollBar.ScrollToEnd();
+            fdrOutputArea.ScrollViewer.ScrollToEnd();
         }
 
         private void tbInputArea_Loaded(object sender, RoutedEventArgs e)
         {
             Keyboard.Focus(tbInputArea);
         }
+
+       
     }
 }
