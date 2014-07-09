@@ -13,6 +13,7 @@ namespace MushyMu.Model
         public string Content;
         public SolidColorBrush ForegroundColor;
         public SolidColorBrush BackgroundColor;
+        //public bool UnderLined;
     }
 
 
@@ -22,16 +23,19 @@ namespace MushyMu.Model
         //regular expression to fit ANSI control sequences
         public readonly string ansiControlRegEx = (char)27 + @"\[" + "[^@-~]*" + "[@-~]";
 
+
         //current settings (with defaults)
 
         private SolidColorBrush foregroundColor = Brushes.LightGray;
         private SolidColorBrush backgroundColor = Brushes.Black;
+        //private bool underLined = false;
         private bool brightColors = true;
 
 
         //scans incoming text for ANSI control sequences, parses them, and returns a list of styled text runs
         public List<AnsiTextRun> Parse(string text)
         {
+            System.Diagnostics.Debug.WriteLine(text);
             //start with an empty list of runs
             List<AnsiTextRun> returnRuns = new List<AnsiTextRun>();
 
@@ -88,6 +92,7 @@ namespace MushyMu.Model
                     newRun.Content = runText;
                     newRun.ForegroundColor = this.foregroundColor;
                     newRun.BackgroundColor = this.backgroundColor;
+                    //newRun.UnderLined = this.underLined;
 
                     returnRuns.Add(newRun);
 
@@ -108,6 +113,12 @@ namespace MushyMu.Model
                             this.backgroundColor = Brushes.Black;
                         }
 
+                        ////Start with Bold, Underline, Italics
+                        //if (param == 4) // Underline
+                        //{
+                        //    this.underLined = true;
+                        //}
+
                         //bright colors on
                         if (param == 1)
                         {
@@ -121,86 +132,87 @@ namespace MushyMu.Model
                         //set foreground color
                         else if (param == 30)
                         {
-                            this.foregroundColor = Brushes.Black;
-                            if (this.brightColors) this.foregroundColor = Brushes.DarkGray;
+                            this.foregroundColor = new SolidColorBrush(Color.FromRgb(0, 0, 0));
+                            if (this.brightColors) this.foregroundColor = new SolidColorBrush(Color.FromRgb(127, 127, 217));
                         }
 
                         else if (param == 31)
                         {
-                            this.foregroundColor = Brushes.DarkRed;
-                            if (this.brightColors) this.foregroundColor = Brushes.Red;
+                            this.foregroundColor = new SolidColorBrush(Color.FromRgb(205,0,0));
+                            if (this.brightColors) this.foregroundColor = new SolidColorBrush(Color.FromRgb(255, 0, 0));
                         }
                         else if (param == 32)
                         {
-                            this.foregroundColor = Brushes.Green;
-                            if (this.brightColors) this.foregroundColor = Brushes.Lime;
+                            this.foregroundColor = new SolidColorBrush(Color.FromRgb(0, 205, 0));
+                            if (this.brightColors) this.foregroundColor = new SolidColorBrush(Color.FromRgb(0, 255, 0));
                         }
                         else if (param == 33)
                         {
-                            this.foregroundColor = Brushes.Gold;
-                            if (this.brightColors) this.foregroundColor = Brushes.Yellow;
+                            this.foregroundColor = new SolidColorBrush(Color.FromRgb(205, 205, 0));
+                            if (this.brightColors) this.foregroundColor = new SolidColorBrush(Color.FromRgb(255, 255, 0));
                         }
                         else if (param == 34)
                         {
-                            this.foregroundColor = Brushes.DarkBlue;
-                            if (this.brightColors) this.foregroundColor = Brushes.Blue;
+                            this.foregroundColor = new SolidColorBrush(Color.FromRgb(0, 0, 238));
+                            if (this.brightColors) this.foregroundColor = new SolidColorBrush(Color.FromRgb(92, 92, 255));
                         }
                         else if (param == 35)
                         {
-                            this.foregroundColor = Brushes.Purple;
-                            if (this.brightColors) this.foregroundColor = Brushes.Magenta;
+                            this.foregroundColor = new SolidColorBrush(Color.FromRgb(205, 0, 205));
+                            if (this.brightColors) this.foregroundColor = new SolidColorBrush(Color.FromRgb(255, 0, 255));
                         }
                         else if (param == 36)
                         {
-                            this.foregroundColor = Brushes.DarkCyan;
-                            if (this.brightColors) this.foregroundColor = Brushes.Cyan;
+                            this.foregroundColor = new SolidColorBrush(Color.FromRgb(0, 205, 205));
+                            if (this.brightColors) this.foregroundColor = new SolidColorBrush(Color.FromRgb(0, 255, 255));
                         }
                         else if (param == 37)
                         {
-                            this.foregroundColor = Brushes.WhiteSmoke;
-                            if (this.brightColors) this.foregroundColor = Brushes.White;
+                            this.foregroundColor = new SolidColorBrush(Color.FromRgb(229, 229, 229));
+                            if (this.brightColors) this.foregroundColor = new SolidColorBrush(Color.FromRgb(255, 255, 255));
                         }
 
                         //set background color
                         else if (param == 40)
                         {
-                            this.backgroundColor = Brushes.Black;
-                            if (this.brightColors) this.backgroundColor = Brushes.DarkGray;
+                            this.foregroundColor = new SolidColorBrush(Color.FromRgb(0, 0, 0));
+                            if (this.brightColors) this.foregroundColor = new SolidColorBrush(Color.FromRgb(127, 127, 217));
                         }
+
                         else if (param == 41)
                         {
-                            this.backgroundColor = Brushes.DarkRed;
-                            if (this.brightColors) this.backgroundColor = Brushes.Red;
+                            this.foregroundColor = new SolidColorBrush(Color.FromRgb(205, 0, 0));
+                            if (this.brightColors) this.foregroundColor = new SolidColorBrush(Color.FromRgb(255, 0, 0));
                         }
                         else if (param == 42)
                         {
-                            this.backgroundColor = Brushes.Green;
-                            if (this.brightColors) this.backgroundColor = Brushes.LawnGreen;
+                            this.foregroundColor = new SolidColorBrush(Color.FromRgb(0, 205, 0));
+                            if (this.brightColors) this.foregroundColor = new SolidColorBrush(Color.FromRgb(0, 255, 0));
                         }
                         else if (param == 43)
                         {
-                            this.backgroundColor = Brushes.Gold;
-                            if (this.brightColors) this.backgroundColor = Brushes.Yellow;
+                            this.foregroundColor = new SolidColorBrush(Color.FromRgb(205, 205, 0));
+                            if (this.brightColors) this.foregroundColor = new SolidColorBrush(Color.FromRgb(255, 255, 0));
                         }
                         else if (param == 44)
                         {
-                            this.backgroundColor = Brushes.DarkBlue;
-                            if (this.brightColors) this.backgroundColor = Brushes.Blue;
+                            this.foregroundColor = new SolidColorBrush(Color.FromRgb(0, 0, 238));
+                            if (this.brightColors) this.foregroundColor = new SolidColorBrush(Color.FromRgb(92, 92, 255));
                         }
                         else if (param == 45)
                         {
-                            this.backgroundColor = Brushes.Purple;
-                            if (this.brightColors) this.backgroundColor = Brushes.Magenta;
+                            this.foregroundColor = new SolidColorBrush(Color.FromRgb(205, 0, 205));
+                            if (this.brightColors) this.foregroundColor = new SolidColorBrush(Color.FromRgb(255, 0, 255));
                         }
                         else if (param == 46)
                         {
-                            this.backgroundColor = Brushes.DarkCyan;
-                            if (this.brightColors) this.backgroundColor = Brushes.Cyan;
+                            this.foregroundColor = new SolidColorBrush(Color.FromRgb(0, 205, 205));
+                            if (this.brightColors) this.foregroundColor = new SolidColorBrush(Color.FromRgb(0, 255, 255));
                         }
                         else if (param == 47)
                         {
-                            this.backgroundColor = Brushes.WhiteSmoke;
-                            if (this.brightColors) this.backgroundColor = Brushes.White;
+                            this.foregroundColor = new SolidColorBrush(Color.FromRgb(229, 229, 229));
+                            if (this.brightColors) this.foregroundColor = new SolidColorBrush(Color.FromRgb(255, 255, 255));
                         }
                         //default background color
                         else if (param == 49)
@@ -214,6 +226,17 @@ namespace MushyMu.Model
                         {
                             this.foregroundColor = Brushes.LightGray;
                             if (this.brightColors) this.foregroundColor = Brushes.White;
+                        }
+
+                        //handle xterm foreground here
+                        else if (param == 38)
+                        {
+                            //Grab 3rd item from array
+                            int xterm = arguments[3];
+                            if (xterm == 000)
+                            {
+                                this.foregroundColor = (SolidColorBrush)(new BrushConverter().ConvertFrom("#000000"));
+                            }
                         }
                     }
                 }
@@ -254,6 +277,8 @@ namespace MushyMu.Model
                 returnRuns.Add(trailingRun);
             }
 
+            //ConvertUrlsToLinks(returnRuns);
+            
             return returnRuns;
         }
     }

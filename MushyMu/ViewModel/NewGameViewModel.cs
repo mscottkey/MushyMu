@@ -6,6 +6,7 @@ using MushyMu.Model;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net.Sockets;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Xml;
@@ -39,31 +40,44 @@ namespace MushyMu.ViewModel
 
         private void ExecuteSaveGameCommand()
         {
+            // Should also check to see if data is valid
+
             //Check to see if Quick connect settings have been filled out
             if (_quickConnectName != null & _quickConnectHost != null & _quickConnectPort != null)
             {
-                string gamesXMLpath = @"C:\ProgramData\MushyMu\MushyMuSettings.xml";
+                 TcpClient _client = new TcpClient();
+                 try
+                 {
+                     _client.Connect(_quickConnectHost, Convert.ToInt32(_quickConnectPort));
+                     _client.Close();
+                     string gamesXMLpath = @"C:\ProgramData\MushyMu\MushyMuSettings.xml";
 
-                XDocument document = XDocument.Load(gamesXMLpath);
-                
-                document.Element("root").Element("games").Add(new XElement("game",
-                new XElement("name", _quickConnectName),
-                new XElement("host", _quickConnectHost),
-                new XElement("port", _quickConnectPort)));
+                     XDocument document = XDocument.Load(gamesXMLpath);
 
-                document.Save(gamesXMLpath);
+                     document.Element("root").Element("games").Add(new XElement("game",
+                     new XElement("name", _quickConnectName),
+                     new XElement("host", _quickConnectHost),
+                     new XElement("port", _quickConnectPort)));
 
-                _games = ListGames();
-                RaisePropertyChanged("Games");
+                     document.Save(gamesXMLpath);
 
-                _quickConnectName = null;
-                _quickConnectHost = null;
-                _quickConnectPort = null;
-                RaisePropertyChanged("QuickConnectName");
-                RaisePropertyChanged("QuickConnectHost");
-                RaisePropertyChanged("QuickConnectPort");
+                     _games = ListGames();
+                     RaisePropertyChanged("Games");
 
-                Messenger.Default.Send(new NotificationMessage("DialogSaveComplete"));
+                     _quickConnectName = null;
+                     _quickConnectHost = null;
+                     _quickConnectPort = null;
+                     RaisePropertyChanged("QuickConnectName");
+                     RaisePropertyChanged("QuickConnectHost");
+                     RaisePropertyChanged("QuickConnectPort");
+
+                     Messenger.Default.Send(new NotificationMessage("DialogSaveComplete"));
+                 }
+                catch
+                 {
+                    //Invalid game info
+                     Messenger.Default.Send(new NotificationMessage("InvalidConnectInfo"));
+                 }
 
 
             }

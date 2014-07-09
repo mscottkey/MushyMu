@@ -9,9 +9,11 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Net.Sockets;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows;
 using System.Windows.Documents;
+using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Threading;
 
@@ -37,25 +39,20 @@ namespace MushyMu.ViewModel
         public RelayCommand SubmitTextEnterKeyCommand { get; private set; }
         public RelayCommand SwitchGamesFlyOut { get; private set; }
         public RelayCommand CommonCmdsFlyOut { get; private set; }
+        public RelayCommand InputHistoryFlyOut { get; private set; }
         public RelayCommand SearchText { get; private set; }
+        public RelayCommand GameSettingsFlyOut { get; private set; }
         private TcpClient _client;
         private Thread _thread;
         public NetworkStream _stream;
         public Action<string> _updateMethod;
         public ConnectionInfo _connectInfo;
-        public TelnetParser _telnetParser;
-        public int TimeOutMs = 100;
-        private byte[] buffer = new byte[2500];
         
         //a parser/decoder for ANSI control sequences, to give text color and potentially other styling
         ANSIColorParser ansiColorParser = new ANSIColorParser();
         
         // Create FlowDocument Output
         FlowDocument output = new FlowDocument();
-
-        //incoming message callback and handler definition
-        //public event serverMessageEventHandler serverMessage;
-        //public delegate void serverMessageEventHandler(List<AnsiTextRun> runs);
 
         public GameViewModel(string token)
         {
@@ -66,11 +63,23 @@ namespace MushyMu.ViewModel
             SubmitTextEnterKeyCommand = new RelayCommand(() => ExecuteSubmitTextEnterKeyCommand());
             SwitchGamesFlyOut = new RelayCommand(() => ExecuteSwitchGamesFlyOut());
             CommonCmdsFlyOut = new RelayCommand(() => ExecuteCommonCmdsFlyOut());
+            InputHistoryFlyOut = new RelayCommand(() => ExecuteInputHistoryFlyOut());
             SearchText = new RelayCommand(() => ExecuteSearchText());
+            GameSettingsFlyOut = new RelayCommand(() => ExecuteGameSettingsFlyOut());
             output.IsEnabled = true;
-            
+
+            // Construct font size list
+            _fontSizes.Add(10);
+            _fontSizes.Add(11);
+            _fontSizes.Add(12);
+            _fontSizes.Add(13);
+            _fontSizes.Add(14);
+            _fontSizes.Add(16);
+            _fontSizes.Add(18);
 
         }
+
+        
 
         private void ExecuteSearchText()
         {
@@ -97,6 +106,19 @@ namespace MushyMu.ViewModel
             }
 
             Messenger.Default.Send(new NotificationMessage("ResetTextBoxFocus"));
+        }
+
+        private void ExecuteGameSettingsFlyOut()
+        {
+            _gameSettingsFlyOutState = true;
+            RaisePropertyChanged("GameSettingsFlyOutState");
+        }
+
+        private void ExecuteInputHistoryFlyOut()
+        {
+            _inputHistoryFlyOutState = true;
+            RaisePropertyChanged("InputHistoryFlyOutState");
+        
         }
 
         private void ExecuteCommonCmdsFlyOut()
@@ -130,47 +152,159 @@ namespace MushyMu.ViewModel
         public void Connect()
         {
 
-            //_updateMethod = HandleDataReceived;
             _client = new TcpClient();
             try
             {
                 _client.Connect(_mushHost, _mushPort);
-
-                ////initialize the telnet parser
-                //this._telnetParser = new TelnetParser(this._client);
-
-                ////start listening for new text
-                //_client.Client.BeginReceive(this.buffer, 0, this.buffer.Length, SocketFlags.None, new AsyncCallback(HandleDataReceived), null);
-
-                ////send a WILL NAWS (negotiate about window size)
-                //this._telnetParser.sendTelnetBytes((byte)Telnet.WILL, (byte)Telnet.NAWS);
-
                 _stream = _client.GetStream();
                 _thread = new Thread(CommThread) { IsBackground = true };
                 _thread.Start();
+                
             }
             catch
             {
-                _updateMethod("Unable to connect to:" + _mushName + " @ " + _mushHost + ":" + _mushPort);
+                EchoInput("Unable to connect to: " + _mushName + " @ " + _mushHost + ":" + _mushPort);
             }
         }
+
 
         private void CommThread()
         {
             string line;
             StreamReader lineRead = new StreamReader(_stream);
-            while ((line = lineRead.ReadLine()) != null)
+            try
             {
-                HandleDataReceived(line);
+                while ((line = lineRead.ReadLine()) != null)
+                {
+                    line = Regex.Replace(line, @"[^\u0000-\u00FD]", string.Empty);
+                    HandleDataReceived(line);
+
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Connection to " + _mushName + " Lost: " + _mushHost + ":" + _mushPort + ex);
             }
         }
 
-        public void HandleDataReceived(string data)
+
+        public void HandleDataReceived(string input)
         {
-            System.Diagnostics.Debug.WriteLine(data);
-            AnsiParseText(data);
+            //System.Diagnostics.Debug.WriteLine(input);
+            string result = input.Replace("\0", string.Empty);
+            AnsiParseText(result);
+        }
+
+        public void AnsiParseText(string text)
+        {
+
+            //System.Diagnostics.Debug.WriteLine(text);
+            Application.Current.Dispatcher.BeginInvoke(
+                (Action)delegate()
+                {
+
+                    Paragraph myParagraph = new Paragraph();
+
+                    //pass the run to the AnsiParser to parse any ANSI control sequences (colors!)
+                    List<AnsiTextRun> runs = this.ansiColorParser.Parse(text);
+                    //add 'runs' to the output
+                    foreach (var r in runs)
+                    {
+                        var rtf = new Run(r.Content);
+                        rtf.Foreground = r.ForegroundColor;
+                        rtf.Background = r.BackgroundColor;
+                        
+                        //Before adding the line to the paragraph, check to see if it contains a url link. If so, split it to runs before and after the link and add the link separately.
+                        //This still needs to be done.
+                        myParagraph.Inlines.Add(rtf);
+                        
+                        //if (r.UnderLined == true)
+                        //{
+                        //    myParagraph.TextDecorations = TextDecorations.Underline;
+                        //}
+                        myParagraph.FontFamily = _selectedFont;
+                        myParagraph.FontSize = _fontSize;
+                        myParagraph.LineHeight = 0.005;
+                        myParagraph.Margin = new Thickness(0);
+                        //myParagraph.KeepWithNext = true;
+                        //myParagraph.KeepTogether = true;
+                    }
+
+                    AppendMushTextStream(myParagraph);
+                    //AppendMushTextStream(myParagraph);
+                    //ScrollViewer.ScrollToBottom();
+                });
+        }
+
+
+
+        private void Disconnect()
+        {
+            throw new NotImplementedException();
+        }
+
+        internal void AppendMushTextStream(Paragraph text)
+        {
+
+            // If ActiveGame = false and HasNewMessage = false, set HasNewMessage to true;
+            if (_activeGame == false && _hasNewMessage == false)
+            {
+                _hasNewMessage = true;
+                RaisePropertyChanged("HasNewMessage");
+                string newMessage = "----> New Activity @ " + System.DateTime.Now;
+                EchoInput(newMessage);
+            }
+            
+
+            output.Blocks.Add(text);
+            _mushTextStream = output;
+            RaisePropertyChanged("MushTextStream");
+            ScrollToBottom(text);
+            
+            //For diagnostic purposes, this will take the current paragraph and display it as XAML for debugging.
+            //Slows down output stream quite a bit.
+            //This is SPECIFICALLY to test for XAML issues, like the extra blank paragraph being added for empty
+            //lines that come back through the tcp stream.
+            //string textOutput = XamlWriter.Save(text);
+            //System.Diagnostics.Debug.WriteLine(textOutput);
+            
+            
+        }
+
+        public void Send(string input)
+        {
+
+            string text;
+
+            //if not connected, do nothing
+            if (!this._client.Connected) return;
+
+            //add carriage return and line feed
+            text = input + "\r\n";
+
+            //send to server
+            _stream.Write(Encoding.UTF8.GetBytes(text), 0, text.Length);
+            
+            //Debug the ling and echo to client window
+            System.Diagnostics.Debug.WriteLine(text);
+            EchoInput(text);
+        }
+
+        public void EchoInput(string input)
+        {
+            Paragraph echo = new Paragraph();
+            Run echoText = new Run(input);
+            echoText.Foreground = Brushes.Yellow;
+            echoText.Background = Brushes.Black;
+            echo.Inlines.Add(echoText);
+            echo.FontFamily = new FontFamily("Courier New");
+            echo.FontSize = 14.0;
+            echo.LineHeight = 1;
+            echo.KeepWithNext = true;
+            AppendMushTextStream(echo);
 
         }
+
 
         public string MushName
         {
@@ -197,20 +331,83 @@ namespace MushyMu.ViewModel
             }
         }
 
+        private ObservableCollection<String> _inputHistory = new ObservableCollection<String>();
+        public ObservableCollection<String> InputHistory
+        {
+            get
+            {
+                return _inputHistory;
+            }
+        }
+
         private object ExecuteSubmitTextEnterKeyCommand()
         {
             var _text = _mushTextInput;
             _mushTextInput = String.Empty;
             RaisePropertyChanged("MushTextInput");
             Send(_text);
+            _inputHistory.Add(_text);
+            RaisePropertyChanged("InputHistory");
             return null;
+        }
+
+        private bool _gameSettingsFlyOutState;
+        public bool GameSettingsFlyOutState
+        {
+            get
+            {
+                return _gameSettingsFlyOutState;
+            }
+            set
+            {
+                _gameSettingsFlyOutState = value;
+                RaisePropertyChanged("GameSettingsFlyOutState");
+            }
+        }
+
+        private bool _inputHistoryFlyOutState;
+        public bool InputHistoryFlyOutState
+        {
+            get
+            {
+                return _inputHistoryFlyOutState;
+            }
+            set
+            {
+                _inputHistoryFlyOutState = value;
+                RaisePropertyChanged("InputHistoryFlyOutState");
+            }
+        }
+
+
+        private int _selectedInputHistoryItem = -1;
+        public int SelectedInputHistoryItem
+        {
+            get { return _selectedInputHistoryItem; }
+            set
+            {
+                SubmitInputHistoryItem(value);
+                _selectedInputHistoryItem = -1;
+            }
+        }
+
+        private void SubmitInputHistoryItem(int _selectedInputHistoryItem)
+        {
+            var cmd = _inputHistory[_selectedInputHistoryItem];
+            _inputHistoryFlyOutState = false;
+            RaisePropertyChanged("InputHistoryFlyOutState");
+            _mushTextInput = cmd;
+            RaisePropertyChanged("MushTextInput");
+            Messenger.Default.Send(new NotificationMessage("ResetInputHistoryIndex"));
+            Messenger.Default.Send(new NotificationMessage("ResetTextBoxFocus"));
         }
 
         public void InitConnectText()
         {
-            string connectmsg = "Connecting to ";
-            string connectinfo = _mushHost + ":" + _mushPort;
-            AnsiParseText(connectmsg + _mushName + " @ " + connectinfo +  "..." );
+                string connectmsg = "Connecting to ";
+                string connectinfo = _mushHost + ":" + _mushPort;
+                EchoInput(connectmsg + _mushName + " @ " + connectinfo +  "..." );
+         
         }
 
         private FlowDocument _mushTextStream = null;
@@ -226,89 +423,69 @@ namespace MushyMu.ViewModel
             set { _mushTextInput = value; RaisePropertyChanged("MushTextInput"); }
         }
 
-        public void AnsiParseText(string text)
+        private FontFamily _selectedFont = new FontFamily("Courier New");
+        public FontFamily SelectedFont
         {
-            
-            
-            Application.Current.Dispatcher.BeginInvoke(
-                (Action)delegate()
-                {
-                    
-                    Paragraph myParagraph = new Paragraph();
-                    
-                    //pass the run to the AnsiParser to parse any ANSI control sequences (colors!)
-                    List<AnsiTextRun> runs = this.ansiColorParser.Parse(text);
-                    //add 'runs' to the output
-                    foreach (var r in runs)
-                    {
-                        var rtf = new Run(r.Content);
-                        rtf.Foreground = r.ForegroundColor;
-                        rtf.Background = r.BackgroundColor;
-                        //rtf.FontFamily = new FontFamily("Courier New");
-                        //rtf.FontSize = 14.0;
-                        myParagraph.Inlines.Add(rtf);
-                        myParagraph.FontFamily = new FontFamily("Courier New");
-                        myParagraph.FontSize = 14.0;
-                        myParagraph.LineHeight = 1;
-                    }
-                    
-                    AppendMushTextStream(myParagraph);
-                    //ScrollViewer.ScrollToBottom();
-                });
+            get { return _selectedFont; }
+            set
+            {
+                if (_selectedFont == value)
+                    return;
+                _selectedFont = value;
+                RaisePropertyChanged("SelectedFont");
+            }
         }
 
-        private void Disconnect()
+
+        private List<int> _fontSizes = new List<int>();
+        public List<int> FontSizes
         {
-            throw new NotImplementedException();
+            get { return _fontSizes; }
+            set
+            {
+                _fontSizes = value;
+
+            }
         }
 
-        internal void AppendMushTextStream(Paragraph text)
+        private int _fontSize = 14;
+        public int FontSize
         {
-
-            output.Blocks.Add(text);
-            _mushTextStream = output;
-            RaisePropertyChanged("MushTextStream");
-            ScrollToBottom(text);
+            get { return _fontSize; }
+            set
+            {
+                if (_fontSize == value)
+                    return;
+                _fontSize = value;
+                RaisePropertyChanged("FontSize");
+            }
         }
 
-        public void Send(string input)
+        public bool _activeGame = true;
+        public bool ActiveGame
         {
-
-            string text;
-
-            //if not connected, do nothing
-            if (!this._client.Connected) return;
-
-            //add carriage return and line feed
-            text = input + "\r\n";
-
-            ////convert from Unicode to ASCII
-            //Encoder encoder = System.Text.Encoding.ASCII.GetEncoder();
-            //char[] charArray = text.ToCharArray();
-            //int count = encoder.GetByteCount(charArray, 0, charArray.Length, true);
-            //byte[] outputBuffer = new byte[count];
-            //encoder.GetBytes(charArray, 0, charArray.Length, outputBuffer, 0, true);
-
-            //send to server
-            _stream.Write(Encoding.ASCII.GetBytes(text), 0, text.Length);
-
-            //Debug the ling and echo to client window
-            System.Diagnostics.Debug.WriteLine(text);
-            EchoInput(text);
+            get { return _activeGame; }
+            set
+            {
+                if (_activeGame == value)
+                    return;
+                _activeGame = value;
+                RaisePropertyChanged("ActiveGame");
+                ScrollToEnd(output);
+            }
         }
 
-        public void EchoInput(string input)
+        public bool _hasNewMessage = false;
+        public bool HasNewMessage
         {
-            Paragraph echo = new Paragraph();
-            Run echoText = new Run(input);
-            echoText.Foreground = Brushes.Yellow;
-            echoText.Background = Brushes.Black;
-            echo.Inlines.Add(echoText);
-            echo.FontFamily = new FontFamily("Courier New");
-            echo.FontSize = 14.0;
-            echo.LineHeight = 1;
-            AppendMushTextStream(echo);
-
+            get { return _hasNewMessage; }
+            set
+            {
+                if (_hasNewMessage == value)
+                    return;
+                _hasNewMessage = value;
+                RaisePropertyChanged("HasNewMessage");
+            }
         }
 
         public void ScrollToBottom(Paragraph text)
@@ -316,6 +493,10 @@ namespace MushyMu.ViewModel
             text.BringIntoView();
         }
 
+        public void ScrollToEnd(FlowDocument text)
+        {
+            text.BringIntoView();
+        }
        
     }
 }

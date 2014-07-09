@@ -13,6 +13,9 @@
         Background="Black"
         Height="600" Width="900"
         DataContext="{Binding Main, Source={StaticResource Locator}}">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+    </Window.Resources>
     <Controls:MetroWindow.WindowCommands>
         <Controls:WindowCommands>
             <Button Content="settings" Command="{Binding Path=OpenFlyoutPanelCommand}" />
@@ -26,16 +29,46 @@
                     <ListBoxItem>Test</ListBoxItem>
                 </ListBox>
             </Controls:Flyout>
-            <Controls:Flyout Header="Connected Games" x:Name="GameList" Position="Right" Width="250"
+            <Controls:Flyout Header="Connected Games" x:Name="GameList" Position="Right" Width="255"
                              IsOpen="{Binding GamesListFlyOutState, Mode=TwoWay}">
-                <ListBox x:Name="lbxConnectedGames" Background="Black" Grid.Column="1" BorderThickness="1" VerticalContentAlignment="Top"
-                 ItemsSource="{Binding GameVMList}" DisplayMemberPath="MushName"  SelectedIndex="{Binding SelectedGame, Mode=TwoWay}"/>
+                <ListBox x:Name="lbxConnectedGames" Background="Black" Grid.Column="1" BorderThickness="1"
+                 ItemsSource="{Binding GameVMList}" SelectedIndex="{Binding SelectedGame, Mode=TwoWay}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="10"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="40"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="!" Grid.Column="0" FontFamily="Goudy HeavyFace" FontSize="20" Width="10" HorizontalAlignment="Left" VerticalAlignment="Center"
+                                           Visibility="{Binding HasNewMessage, Converter={StaticResource BoolToVis}, Mode=TwoWay}" 
+                                           FontWeight="ExtraBold" Foreground="Yellow" />
+                                <TextBlock Text="{Binding MushName}" Grid.Column="1" FontFamily="Courier New" FontSize="14" Width="200" VerticalAlignment="Center"/>
+                                <Button x:Name="CloseGameFromListButton" Grid.Column="2" Content="û" VerticalAlignment="Center" Width="35" VerticalContentAlignment="Center"
+                                        Style="{StaticResource AccentedSquareButtonStyle}" FontFamily="Wingdings" FontSize="18"/>
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
             </Controls:Flyout>
             <Controls:Flyout Header="Common Commands" x:Name="CommonCmds" Position="Right" Width="300"
                              IsOpen="{Binding CommonCmdsFlyOutState, Mode=TwoWay}">
                 <ListBox x:Name="lbxCommonCmds" Background="Black" Grid.Column="1" BorderThickness="1" VerticalContentAlignment="Top"
                  ItemsSource="{Binding Path=GameCommands}" SelectedItem="{Binding SelectedCmd, Mode=TwoWay}" DisplayMemberPath="Name"
-                         IsSynchronizedWithCurrentItem="True" FontSize="20" FontWeight="ExtraLight"/>
+                         IsSynchronizedWithCurrentItem="True" FontSize="20" FontWeight="ExtraLight">
+                    
+                </ListBox>
+            </Controls:Flyout>
+            <Controls:Flyout Header="Input History" x:Name="InputHistory" Position="Right" Width="400"
+                             IsOpen="{Binding Path=CurrentGame.InputHistoryFlyOutState, Mode=TwoWay}">
+                <ListBox x:Name="lbxInputHistory" Background="Black" Grid.Column="1" BorderThickness="1" VerticalContentAlignment="Top"
+                         ItemsSource="{Binding Path=CurrentGame.InputHistory, Mode=OneWay}" 
+                         SelectedIndex="{Binding Path=CurrentGame.SelectedInputHistoryItem, Mode=TwoWay}"
+                         IsSynchronizedWithCurrentItem="True" FontSize="14" FontWeight="ExtraLight"/>
+            </Controls:Flyout>
+            <Controls:Flyout Header="Game Settings" x:Name="GameSettings" Position="Right" Width="250"
+                             IsOpen="{Binding Path=CurrentGame.GameSettingsFlyOutState, Mode=TwoWay}">
             </Controls:Flyout>
         </Controls:FlyoutsControl>
     </Controls:MetroWindow.Flyouts>

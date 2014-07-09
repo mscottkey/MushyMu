@@ -21,7 +21,7 @@ namespace MushyMu.ViewModel
         readonly static NewGameViewModel _newGameViewModel = new NewGameViewModel();
         readonly static GameContainerViewModel _gameContainerViewModel = new GameContainerViewModel();
         public RelayCommand OpenFlyoutPanelCommand { get; private set; }
-
+       
         /// <summary>
         /// Gets the CurrentViewModel
         /// Changes to that property's value raise the PropertyChanged event. 
@@ -116,6 +116,7 @@ namespace MushyMu.ViewModel
                          CommonCmdsFlyOut(true);
                          break;
 
+        
                      default:
                          break;
  
@@ -141,7 +142,7 @@ namespace MushyMu.ViewModel
             _settingsFlyoutState = true;
             RaisePropertyChanged("SettingsFlyoutState");
         }
-
+        
 
         private bool _commonCmdsFlyOutState;
         public bool CommonCmdsFlyOutState
@@ -156,6 +157,8 @@ namespace MushyMu.ViewModel
                 RaisePropertyChanged("CommonCmdsFlyOutState");
             }
         }
+
+        
 
         private bool _gamesListFlyOutState;
         public bool GamesListFlyOutState
@@ -222,13 +225,22 @@ namespace MushyMu.ViewModel
         public string Token;
 
         GameViewModel _currentGame;
+        GameViewModel _prevGame;
 
         private object ReceiveNewGame(Game _game)
         {
+            //Set previous game ViewModel to non Active state so it knows it is in the background
+            if (_currentGame != null)
+            { 
+                _prevGame = _currentGame;
+                _prevGame.ActiveGame = false;
+                _prevGame.HasNewMessage = false;
+            }
+            
 
             //Send out game info, then generate the View Model
             Token = Guid.NewGuid().ToString();
-
+            
             _currentGame = new GameViewModel(Token);
 
             Messenger.Default.Send<Game>(_game, Token);
@@ -260,9 +272,25 @@ namespace MushyMu.ViewModel
                 _selectedGame = value;
                 RaisePropertyChanged("SelectedGame");
 
+                //Before selection changes, register previous game
+                _prevGame = _currentGame;
+               
+
                 //Selection changed, switch view to that VM
                 _currentGame = GetSelectedGameByID(_selectedGame);
                 RaisePropertyChanged("CurrentGame");
+
+                //Set current game as ActiveGame
+                _currentGame.ActiveGame = true;
+                _currentGame.HasNewMessage = false;
+
+                //Close the flyout
+                _gamesListFlyOutState = false;
+                RaisePropertyChanged("GamesListFlyOutState");
+
+                //Set the previous game to inactive and no new messages
+                _prevGame._activeGame = false;
+                _prevGame._hasNewMessage = false;
             }
         }
 
@@ -292,6 +320,7 @@ namespace MushyMu.ViewModel
             Messenger.Default.Send(new NotificationMessage("ResetSelectedCommand"));
         }
 
+        
         public GameViewModel CurrentGame
         {
             get

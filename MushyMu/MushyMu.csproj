@@ -126,6 +126,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Controls\FontSelector.xaml.cs">
+      <DependentUpon>FontSelector.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\MuBox.cs" />
     <Compile Include="Design\DesignDataService.cs" />
     <Compile Include="Model\AnsiColorParser.cs" />
@@ -136,9 +139,9 @@
     <Compile Include="Model\DataService.cs" />
     <Compile Include="Model\Game.cs" />
     <Compile Include="Model\IDataService.cs" />
+    <Compile Include="Model\InputHistory.cs" />
     <Compile Include="Model\MuCommand.cs" />
     <Compile Include="Model\OpenGameMessage.cs" />
-    <Compile Include="Model\TelnetParser.cs" />
     <Compile Include="ViewModel\GameContainerViewModel.cs" />
     <Compile Include="ViewModel\GameViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
@@ -153,6 +156,10 @@
     <Compile Include="Views\GameView.xaml.cs">
       <DependentUpon>GameView.xaml</DependentUpon>
     </Compile>
+    <Page Include="Controls\FontSelector.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

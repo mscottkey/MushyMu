@@ -33,7 +33,7 @@ namespace MushyMu.Views
                     case "ResetTextBoxFocus":
                         ResetTextBoxFocus();
                         break;
-
+                    
                     default:
                         break;
                 }
@@ -48,8 +48,10 @@ namespace MushyMu.Views
         }
 
 
+
         private void fdrOutputArea_RequestBringIntoView(object sender, RequestBringIntoViewEventArgs e)
         {
+            fdrOutputArea.ScrollViewer.UpdateLayout();
             fdrOutputArea.ScrollViewer.ScrollToEnd();
         }
 

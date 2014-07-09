@@ -32,12 +32,38 @@ namespace MushyMu
                     case "ResetSelectedCommand":
                         ResetSelectedCommand();
                         break;
+                    case "ResetInputHistoryIndex":
+                        ResetInputHistoryIndex();
+                        break;
+                    case "InvalidConnectInfo":
+                        InvalidConnectInfo();
+                        break;
+
 
                     default:
                         break;
 
                 }
             });
+        }
+
+        private void ResetInputHistoryIndex()
+        {
+            lbxInputHistory.UnselectAll();
+        }
+
+        private async void InvalidConnectInfo()
+        {
+            var mySettings = new MetroDialogSettings()
+            {
+                AffirmativeButtonText = "Ok",
+                //NegativeButtonText = "Go away!",
+                //FirstAuxiliaryButtonText = "Cancel",
+                //ColorScheme = UseAccentForDialogsMenuItem.IsChecked ? MetroDialogColorScheme.Accented : MetroDialogColorScheme.Theme
+            };
+
+            MessageDialogResult result = await this.ShowMessageAsync("Failed to Save!", "Either the host and/or port provided are incorrect, or that game is currently down. Please try again.",
+                MessageDialogStyle.Affirmative, mySettings);
         }
 
         private void ResetSelectedCommand()
