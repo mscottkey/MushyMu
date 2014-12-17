@@ -6,15 +6,20 @@
         xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         xmlns:params="http://schemas.codeplex.com/elysium/params" 
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:cmd="clr-namespace:GalaSoft.MvvmLight.Command;assembly=GalaSoft.MvvmLight"
+        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
         mc:Ignorable="d"      
-        WindowStartupLocation="CenterScreen" Title="MushyMu"
+        WindowStartupLocation="CenterScreen" Title="{Binding Title, Mode=TwoWay}"
         ShowInTaskbar="True"
-        Background="Black"
-        Height="600" Width="900"
-        DataContext="{Binding Main, Source={StaticResource Locator}}">
+        Background="Black" ResizeMode="CanResizeWithGrip"
+        Height="600" Width="1100"
+        DataContext="{Binding Main, Source={StaticResource Locator}}"
+        Loaded="MetroWindow_Loaded">
+   
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+        
     </Window.Resources>
     <Controls:MetroWindow.WindowCommands>
         <Controls:WindowCommands>
@@ -24,55 +29,99 @@
     <Controls:MetroWindow.Flyouts>
         <Controls:FlyoutsControl>
             <Controls:Flyout Header="Settings" x:Name="SettingsFlyout" Position="Right" Width="200" 
-                             IsOpen="{Binding SettingsFlyoutState, Mode=TwoWay}">
-                <ListBox>
-                    <ListBoxItem>Test</ListBoxItem>
-                </ListBox>
-            </Controls:Flyout>
-            <Controls:Flyout Header="Connected Games" x:Name="GameList" Position="Right" Width="255"
-                             IsOpen="{Binding GamesListFlyOutState, Mode=TwoWay}">
-                <ListBox x:Name="lbxConnectedGames" Background="Black" Grid.Column="1" BorderThickness="1"
-                 ItemsSource="{Binding GameVMList}" SelectedIndex="{Binding SelectedGame, Mode=TwoWay}">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="10"/>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="40"/>
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Text="!" Grid.Column="0" FontFamily="Goudy HeavyFace" FontSize="20" Width="10" HorizontalAlignment="Left" VerticalAlignment="Center"
-                                           Visibility="{Binding HasNewMessage, Converter={StaticResource BoolToVis}, Mode=TwoWay}" 
-                                           FontWeight="ExtraBold" Foreground="Yellow" />
-                                <TextBlock Text="{Binding MushName}" Grid.Column="1" FontFamily="Courier New" FontSize="14" Width="200" VerticalAlignment="Center"/>
-                                <Button x:Name="CloseGameFromListButton" Grid.Column="2" Content="û" VerticalAlignment="Center" Width="35" VerticalContentAlignment="Center"
-                                        Style="{StaticResource AccentedSquareButtonStyle}" FontFamily="Wingdings" FontSize="18"/>
-                            </Grid>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
+                             IsOpen="{Binding SettingsFlyoutState, Mode=TwoWay}" IsPinned="false">
+                <StackPanel>
+                    <Controls:ToggleSwitch Header="Touch Mode" IsChecked="{Binding TouchOnOff}"/>
+                    <Separator Padding="10" Margin="5"/>
+                    <Label Content="Theme" Height="50" FontFamily="Segoe UI" FontSize="18" FontWeight="ExtraBold"/>
+                    <ComboBox ItemsSource="{Binding AccentColors}" Height="25" SelectedValuePath="Name" SelectedValue="{Binding AccentChoice}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <WrapPanel>
+                                    <TextBlock Text="{Binding Name}" FontFamily="Segoe UI" FontSize="16" Width="100"/>
+                                </WrapPanel>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </StackPanel>
             </Controls:Flyout>
             <Controls:Flyout Header="Common Commands" x:Name="CommonCmds" Position="Right" Width="300"
-                             IsOpen="{Binding CommonCmdsFlyOutState, Mode=TwoWay}">
+                             IsOpen="{Binding CurrentGame.CommonCmdsFlyOutState, Mode=TwoWay}">
                 <ListBox x:Name="lbxCommonCmds" Background="Black" Grid.Column="1" BorderThickness="1" VerticalContentAlignment="Top"
-                 ItemsSource="{Binding Path=GameCommands}" SelectedItem="{Binding SelectedCmd, Mode=TwoWay}" DisplayMemberPath="Name"
-                         IsSynchronizedWithCurrentItem="True" FontSize="20" FontWeight="ExtraLight">
-                    
+                 ItemsSource="{Binding CurrentGame.GameCommands}" SelectedItem="{Binding CurrentGame.SelectedCmd, Mode=TwoWay}" 
+                         DisplayMemberPath="Name" IsSynchronizedWithCurrentItem="True" 
+                         FontSize="20" FontWeight="ExtraLight">
                 </ListBox>
             </Controls:Flyout>
             <Controls:Flyout Header="Input History" x:Name="InputHistory" Position="Right" Width="400"
-                             IsOpen="{Binding Path=CurrentGame.InputHistoryFlyOutState, Mode=TwoWay}">
+                             IsOpen="{Binding Path=CurrentGame.InputHistoryFlyOutState, Mode=TwoWay}" IsPinned="False">
                 <ListBox x:Name="lbxInputHistory" Background="Black" Grid.Column="1" BorderThickness="1" VerticalContentAlignment="Top"
                          ItemsSource="{Binding Path=CurrentGame.InputHistory, Mode=OneWay}" 
                          SelectedIndex="{Binding Path=CurrentGame.SelectedInputHistoryItem, Mode=TwoWay}"
                          IsSynchronizedWithCurrentItem="True" FontSize="14" FontWeight="ExtraLight"/>
             </Controls:Flyout>
-            <Controls:Flyout Header="Game Settings" x:Name="GameSettings" Position="Right" Width="250"
-                             IsOpen="{Binding Path=CurrentGame.GameSettingsFlyOutState, Mode=TwoWay}">
+            <Controls:Flyout Header="Game Settings" x:Name="GameSettings" Position="Right" Width="350"
+                             IsOpen="{Binding Path=CurrentGame.GameSettingsFlyOutState, Mode=TwoWay}" IsPinned="False">
+                <StackPanel Orientation="Vertical" Margin="10,10,10,10">
+                    <Controls:ToggleSwitch Header="Logging" IsChecked="{Binding CurrentGame.LoggingOnOff}"/>
+                    <Controls:ToggleSwitch Header="Include history?" IsChecked="{Binding CurrentGame.LoggingHistoryOnOff}" />
+                    <TextBox Style="{DynamicResource BrowseFileTextBox}" Text="{Binding CurrentGame.LogSaveLocation}" FontSize="12pt" />
+                    
+                    <Separator Margin="10,20,10,20"/>
+                    
+                    <Controls:ToggleSwitch Header="Wrapping" IsChecked="{Binding CurrentGame.Wrapping}"/>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="Wrap @" FontSize="12pt"/>
+                        <TextBox FontSize="12pt" Text="{Binding CurrentGame.WrappingLength}" BorderThickness="0" Width="50"/>
+                        <Label Content="characters" FontSize="12pt"/>
+                    </StackPanel>
+                    
+                    <Separator Margin="10,20,10,20"/>
+
+                    <Label FontFamily="Segoe UI" FontSize="16pt" FontWeight="Bold" Margin="0,0,0,10">Font Selection</Label>
+                    <ComboBox Margin="0,0,0,10" SelectedValue="{Binding CurrentGame.SelectedFont, Mode=TwoWay}" 
+                              Height="40" Width="250" HorizontalAlignment="Left"
+                              xmlns:ComponentModel="clr-namespace:System.ComponentModel;assembly=WindowsBase"
+                              ItemTemplate="{DynamicResource FontTemplate}">
+                        <ComboBox.Resources>
+
+                        <CollectionViewSource x:Key="myFonts" Source="{Binding Source={x:Static Fonts.SystemFontFamilies}}">
+                            <CollectionViewSource.SortDescriptions>
+                                <ComponentModel:SortDescription PropertyName="Source" />
+                            </CollectionViewSource.SortDescriptions>
+                        </CollectionViewSource>
+
+                    <Style x:Key="FontStyle">
+                        <Setter Property="Control.FontFamily" Value="{Binding Source}" />
+                        <Setter Property="Control.FontSize" Value="16" />
+                    </Style>
+
+                    <DataTemplate x:Key="FontTemplate">
+                        <StackPanel VirtualizingStackPanel.IsVirtualizing="True">
+                            <TextBlock Style="{StaticResource FontStyle}"
+                           Text="{Binding Source}"
+                           ToolTip="{Binding Source}" />
+                        </StackPanel>
+                    </DataTemplate>
+
+                </ComboBox.Resources>
+
+                <ComboBox.ItemsSource>
+                    <Binding Source="{StaticResource myFonts}" />
+                </ComboBox.ItemsSource>
+            </ComboBox>
+            <ComboBox ItemsSource="{Binding CurrentGame.FontSizes}" SelectedItem="{Binding CurrentGame.SelectedFontSize}"  Margin="0,0,0,0"
+                      Height="40" Width="80" FontSize="18" HorizontalAlignment="Left" />
+
+                </StackPanel>
+
+
             </Controls:Flyout>
         </Controls:FlyoutsControl>
     </Controls:MetroWindow.Flyouts>
 
+    
+    
     <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
         <TabControl SelectedIndex="{Binding Path=SelectedTabIndex, Mode=TwoWay}">
             <TabItem Header="New Game">

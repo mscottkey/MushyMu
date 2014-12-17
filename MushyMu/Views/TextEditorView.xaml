@@ -1,0 +1,134 @@
+﻿<Controls:MetroWindow x:Class="MushyMu.Views.TextEditorView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:ignore="http://www.ignore.com"
+        xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        xmlns:MuControls="clr-namespace:MushyMu.Controls"
+        mc:Ignorable="d ignore"
+        WindowStartupLocation="CenterScreen"
+                      
+        DataContext="{Binding TextEditor, Source={StaticResource Locator}}">
+
+    <Controls:MetroWindow.Flyouts>
+        <Controls:FlyoutsControl>
+            <Controls:Flyout Header="Menu" x:Name="MenuFlyout" Position="Right" Width="250" 
+                             IsOpen="{Binding MenuFlyOutState, Mode=TwoWay}" IsPinned="false">
+                <StackPanel>
+                    <Controls:ToggleSwitch Header="Convert Space to %b" IsChecked="{Binding SpaceOnOff}"/>
+                    <Controls:ToggleSwitch Header="Convert Return to %r" IsChecked="{Binding ReturnOnOff}"/>
+                    <Separator Padding="10" Margin="5"/>
+
+                </StackPanel>
+            </Controls:Flyout>
+            <Controls:Flyout Header="Color Picker" x:Name="ColorPicker" Position="Bottom" Height="225"
+                             IsOpen="{Binding ColorPickerFlyOutState, Mode=TwoWay}" IsPinned="False">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="50"/>
+                        <RowDefinition Height="50"/>
+                        <RowDefinition Height="10"/>
+                        <RowDefinition Height="50"/>
+                        <RowDefinition Height="50"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="35*"/>
+                        <ColumnDefinition Width="25*"/>
+                        <ColumnDefinition Width="40*"/>
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Row="0" Grid.Column="0">ForeGround Color:</Label>
+                    <ComboBox Grid.Row="1" Grid.Column="0" ItemsSource="{Binding StandardAnsiFG, Mode=TwoWay}" SelectedItem="{Binding SelectedFG}" Width="200">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <WrapPanel>
+                                    <TextBlock Background="{Binding RGB}" Width="20" Height="20" Margin="5"/>
+                                    <TextBlock Text="{Binding ColorName}" FontFamily="Segoe UI" FontSize="16" Width="Auto"/>
+                                </WrapPanel>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                    <Separator Grid.Row="2" Margin="5" Grid.ColumnSpan="2"/>
+                    <Label Grid.Row="3" Grid.Column="0">Background Color:</Label>
+                    <ComboBox Grid.Row="4" Grid.Column="0" ItemsSource="{Binding StandardAnsiBG, Mode=TwoWay}" SelectedItem="{Binding SelectedBG}" Width="225">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <WrapPanel>
+                                    <TextBlock Background="{Binding RGB}" Width="20" Height="20" Margin="5"/>
+                                    <TextBlock Text="{Binding ColorName}" FontFamily="Segoe UI" FontSize="16" Width="Auto"/>
+                                </WrapPanel>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+
+                    <CheckBox Content="Highlighted Foreground?" IsChecked="{Binding HFG, Mode=TwoWay}" Grid.Row="1" Grid.Column="1"/>
+                    <CheckBox Content="Highlighted Background?" IsChecked="{Binding HBG, Mode=TwoWay}" Grid.Row="4" Grid.Column="1"/>
+                    
+                    <Label Grid.Row="0" Grid.Column="2">Ansi Code:</Label>
+                    <TextBlock Text="{Binding AnsiBlock, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontFamily="Courier New" FontSize="12pt" Grid.Row="1" Grid.RowSpan="3" Grid.Column="2" Margin="5"/>
+                    <WrapPanel Grid.Row="4" Grid.Column="2">
+                        <Button Content="Preview" Command="{Binding PreviewAnsi}" Width="75"/>
+                        <Button Content="Submit" Command="{Binding SubmitAnsi}" Width="75"/>
+                    </WrapPanel>
+                </Grid>
+            </Controls:Flyout>
+        </Controls:FlyoutsControl>
+    </Controls:MetroWindow.Flyouts>
+    
+    <Grid x:Name="InputOutputGrid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+       
+        <Grid Grid.Row="0" Background="Black">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="250" />
+                <ColumnDefinition Width="60" />
+                <ColumnDefinition Width="60"/>
+                <ColumnDefinition Width="60"/>
+                <ColumnDefinition Width="60"/>
+                <ColumnDefinition Width="60"/>
+                <ColumnDefinition Width="60"/>
+                <ColumnDefinition Width="60"/>
+                <ColumnDefinition Width="60"/>
+                <ColumnDefinition Width="60"/>
+
+            </Grid.ColumnDefinitions>
+            <TextBox Grid.Column="0" x:Name="tbSearch" Controls:TextboxHelper.ClearTextButton="True" FontFamily="Arial" FontSize="20" Height="40"
+                     VerticalAlignment="Center" VerticalContentAlignment="Center" Visibility="Visible" HorizontalAlignment="Left"
+                     BorderBrush="Black"  Width="250" Margin="0,0,0,0" Controls:TextboxHelper.Watermark="Search text..." Text="{Binding SearchValue, Mode=TwoWay}"/>
+            <Button Grid.Column="1" Content="" FontFamily="Segoe UI Symbol" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" 
+                    FontSize="16pt" Height="50" Width="50" Margin="0,0,0,0"
+                    Style="{DynamicResource MetroCircleButtonStyle}" />
+
+            <Button Grid.Column="2" Content=""  FontFamily="Segoe UI Symbol" FontSize="16pt" Command="{Binding Path=Undo}"
+                        HorizontalAlignment="Right" Height="50" Width="50" Margin="0,0,0,0" HorizontalContentAlignment="Center"
+                        Style="{DynamicResource MetroCircleButtonStyle}" VerticalContentAlignment="Center" Padding="1,0,1,0" ToolTip="Undo"/>
+
+            <Button Grid.Column="3" Content=""  FontFamily="Segoe UI Symbol" FontSize="16pt" Command="{Binding Path=Redo}"
+                        HorizontalAlignment="Right" Height="50" Width="50" Margin="0,0,0,0" HorizontalContentAlignment="Center"
+                        Style="{DynamicResource MetroCircleButtonStyle}" VerticalContentAlignment="Center" Padding="1,0,1,0" ToolTip="Redo"/>
+
+            <Button Grid.Column="4" Content=""  FontFamily="Segoe UI Symbol" FontSize="18pt" Command="{Binding Path=ColorPickerFlyOut}"
+                        HorizontalAlignment="Right" Height="50" Width="50" Margin="0,0,0,0" HorizontalContentAlignment="Center"
+                        Style="{DynamicResource MetroCircleButtonStyle}" VerticalContentAlignment="Center" Padding="0,0,0,0" ToolTip="Color Picker Ansi Builder"/>
+
+            <Button Grid.Column="5" Content="Ⲷ"  FontFamily="Segoe UI Symbol" FontSize="20pt" Command="{Binding Path=MenuFlyOut}"
+                        HorizontalAlignment="Right" Height="50" Width="50" Margin="0,0,0,0" HorizontalContentAlignment="Center"
+                        Style="{DynamicResource MetroCircleButtonStyle}" VerticalContentAlignment="Center" Padding="0,0,1,2" ToolTip="Menu"/>
+
+            <Button Grid.Column="6" Content=""  FontFamily="Segoe UI Symbol" FontSize="16pt" Command="{Binding Path=SendToInput}"
+                        HorizontalAlignment="Right" Height="50" Width="50" Margin="0,0,0,0" HorizontalContentAlignment="Center"
+                        Style="{DynamicResource MetroCircleButtonStyle}" VerticalContentAlignment="Center" Padding="0,0,0,0" ToolTip="Send to input window"/>
+
+            <Button Grid.Column="7" Content=""  FontFamily="Segoe UI Symbol" FontSize="22pt" Command="{Binding Path=SendToGame}"
+                        HorizontalAlignment="Right" Height="50" Width="50" Margin="0,0,0,0" HorizontalContentAlignment="Center"
+                        Style="{DynamicResource MetroCircleButtonStyle}" VerticalContentAlignment="Center" Padding="1,0,0,1" ToolTip="Send to game"/>
+
+        </Grid>
+
+        <TextBox Grid.Row="1" Text="{Binding Text,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" AutoWordSelection="True" Background="Black" IsUndoEnabled="True"
+                          Foreground="LightGray" IsEnabled="True" FontFamily="Courier New" FontSize="12pt" AcceptsReturn="True" AcceptsTab="True"  />
+    </Grid>
+</Controls:MetroWindow>

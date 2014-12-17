@@ -15,6 +15,7 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="60"/>
+            <RowDefinition Height="60" />
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0" Background="Black" Orientation="Horizontal" Grid.ColumnSpan="2">
@@ -36,8 +37,17 @@
                     Margin="20,5"
                     Style="{DynamicResource MetroCircleButtonStyle}" />
         </StackPanel>
+        <StackPanel Grid.Row="1" Background="Black" Orientation="Horizontal" Grid.ColumnSpan="2">
+            <TextBox x:Name="tbCharName" Controls:TextboxHelper.ClearTextButton="True" FontFamily="Arial" FontSize="20" Height="40" 
+                     VerticalAlignment="Center" VerticalContentAlignment="Center" Text="{Binding QuickConnectCharName}"
+                     BorderBrush="Black"  Width="250" Margin="20,0,20,0" Controls:TextboxHelper.Watermark="Character Name" />
 
-        <ItemsControl Background="Black" Grid.Row="1" ItemsSource="{Binding Games, Mode=TwoWay}">
+            <TextBox x:Name="tbCharPass" Controls:TextboxHelper.ClearTextButton="True" TextWrapping="Wrap" 
+                     BorderBrush="Black" Height="40" Width="250" Margin="20,0,20,0" FontFamily="Arial" FontSize="20"
+                     Controls:TextboxHelper.Watermark="Character Password" VerticalContentAlignment="Center" Text="{Binding QuickConnectPassword}"/>
+        </StackPanel>
+
+        <ItemsControl Background="Black" Grid.Row="2" ItemsSource="{Binding Games, Mode=TwoWay}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <WrapPanel IsItemsHost="True"/>
@@ -46,13 +56,16 @@
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <Controls:Tile Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}, Path=DataContext.OpenGameCommand}" CommandParameter="{Binding}" 
-                                   Height="100" Width="250" Margin="20,20,20,10" FontFamily="Arial" Title="{Binding Path=Name}">
+                                   Height="100" Width="250" Margin="20,20,20,10" FontFamily="Arial" FontWeight="Bold" FontSize="5" Title="{Binding Name}" >
+                        
                         <Grid Height="100" Width="250">
                             <TextBlock HorizontalAlignment="Center" FontWeight="Light" FontFamily="Arial">
                             <Run Text="&#x0a;" />
+                            <Run Text="{Binding Path=CharName}" FontSize="16" FontFamily="Arial" FontWeight="ExtraBold"/>
+                            <Run Text="&#x0a;" />
                             <Run Text="{Binding Path=Host}" FontSize="18" FontFamily="Arial" FontWeight="ExtraLight"/>
                             <Run Text="&#x0a;" />
-                            <Run Text="{Binding Path=Port}" FontSize="18" FontFamily="Arial" FontWeight="ExtraLight"/>
+                            <Run Text="{Binding Path=Port}" FontSize="14" FontFamily="Arial" FontWeight="ExtraLight"/>
                             </TextBlock>
                         </Grid>
 

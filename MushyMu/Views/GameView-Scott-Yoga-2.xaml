@@ -1,0 +1,105 @@
+﻿<UserControl x:Class="MushyMu.Views.GameView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:model="clr-namespace:MushyMu.Model"
+        xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        xmlns:MuControls="clr-namespace:MushyMu.Controls"
+        xmlns:ignore="http://www.ignore.com"
+        mc:Ignorable="d ignore"
+        d:DesignHeight="600" d:DesignWidth="1000">
+
+    <Grid x:Name="InputOutputGrid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="80*" />
+            <RowDefinition Height="20*" />
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0" Background="Black">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="250" />
+                <ColumnDefinition Width="50" />
+                <ColumnDefinition Width="250" />
+                <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="60"/>
+                <ColumnDefinition Width="60"/>
+                <ColumnDefinition Width="60"/>
+                <ColumnDefinition Width="60"/>
+            </Grid.ColumnDefinitions>
+                <TextBox Grid.Column="0" x:Name="tbName" Controls:TextboxHelper.ClearTextButton="True" FontFamily="Arial" FontSize="20" Height="40"
+                     VerticalAlignment="Center" VerticalContentAlignment="Center" Visibility="Visible" HorizontalAlignment="Left"
+                     BorderBrush="Black"  Width="250" Margin="0,0,0,0" Controls:TextboxHelper.Watermark="Search text..." Text="{Binding SearchValue, Mode=TwoWay}"/>
+            <Button Grid.Column="1" Content="" FontFamily="Segoe UI Symbol" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" 
+                    FontSize="18" Height="50" Width="50" Margin="0,0,0,0" Command="{Binding SearchText}"
+                    Style="{DynamicResource MetroCircleButtonStyle}" />
+            <ComboBox Grid.Column="2" Margin="10,0,0,0" SelectedValue="{Binding SelectedFont, Mode=TwoWay}" Height="40"
+          xmlns:ComponentModel="clr-namespace:System.ComponentModel;assembly=WindowsBase"
+          ItemTemplate="{DynamicResource FontTemplate}">
+                <ComboBox.Resources>
+
+                    <CollectionViewSource x:Key="myFonts" Source="{Binding Source={x:Static Fonts.SystemFontFamilies}}">
+                        <CollectionViewSource.SortDescriptions>
+                            <ComponentModel:SortDescription PropertyName="Source" />
+                        </CollectionViewSource.SortDescriptions>
+                    </CollectionViewSource>
+
+                    <Style x:Key="FontStyle">
+                        <Setter Property="Control.FontFamily" Value="{Binding Source}" />
+                        <Setter Property="Control.FontSize" Value="16" />
+                    </Style>
+
+                    <DataTemplate x:Key="FontTemplate">
+                        <StackPanel VirtualizingStackPanel.IsVirtualizing="True">
+                            <TextBlock Style="{StaticResource FontStyle}"
+                           Text="{Binding Source}"
+                           ToolTip="{Binding Source}" />
+                        </StackPanel>
+                    </DataTemplate>
+
+                </ComboBox.Resources>
+
+                <ComboBox.ItemsSource>
+                    <Binding Source="{StaticResource myFonts}" />
+                </ComboBox.ItemsSource>
+            </ComboBox>
+            <ComboBox ItemsSource="{Binding FontSizes}" SelectedItem="{Binding FontSize}" Grid.Column="3" Margin="10,0,0,0"
+                      Height="40" Width="80" FontSize="18"/>
+            <Button Grid.Column="4" Content="ç"  FontFamily="Wingdings" FontSize="30" Command="{Binding Path=InputHistoryFlyOut}"
+                        HorizontalAlignment="Right" Height="50" Width="50" Margin="0,0,0,0" HorizontalContentAlignment="Center"
+                        Style="{DynamicResource MetroCircleButtonStyle}" VerticalContentAlignment="Center" Padding="0,0,0,0"/>
+            <Button Grid.Column="5" Content=""  FontFamily="Segoe UI Symbol" FontSize="30" Command="{Binding Path=GameSettingsFlyOut}"
+                        HorizontalAlignment="Right" Height="50" Width="50" Margin="0,0,0,0" HorizontalContentAlignment="Center"
+                        Style="{DynamicResource MetroCircleButtonStyle}" VerticalContentAlignment="Center" Padding="1,0,0,0"/>
+
+            <Button Grid.Column="6" Content=""  FontFamily="Segoe UI Symbol" FontSize="30" Command="{Binding Path=CommonCmdsFlyOut}"
+                        HorizontalAlignment="Right" Height="50" Width="50" Margin="0,0,0,0" HorizontalContentAlignment="Center"
+                        Style="{DynamicResource MetroCircleButtonStyle}" VerticalContentAlignment="Center" Padding="0,0,0,0"/>
+            <Button Grid.Column="7" Content="ⲷ"  FontFamily="Segoe UI Symbol" FontSize="30" Command="{Binding Path=SwitchGamesFlyOut}"
+                        HorizontalAlignment="Right" Height="50" Width="50" Margin="0,0,0,0" HorizontalContentAlignment="Center"
+                        Style="{DynamicResource MetroCircleButtonStyle}" VerticalContentAlignment="Center" Padding="0,0,0,9"/>
+
+
+        </Grid>
+        <!--<ScrollViewer Name="ScrollBar" IsEnabled="True" PanningMode="VerticalOnly" VerticalScrollBarVisibility="Auto" Grid.Row="1">-->
+            <MuControls:MuBox Grid.Row="1" Background="Black" VerticalContentAlignment="Top" Foreground="LightGray"
+                            VerticalAlignment="Stretch" Document="{Binding MushTextStream, Mode=OneWay}" x:Name="fdrOutputArea"
+                            VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Hidden" IsSelectionEnabled="True"
+                            IsHitTestVisible="True" RequestBringIntoView="fdrOutputArea_RequestBringIntoView" IsEnabled="True"
+                            FontFamily="{Binding SelectedFont, Mode=TwoWay}" FontSize="{Binding FontSize, Mode=TwoWay}"
+                            ScrollViewer.PanningMode="VerticalOnly" ScrollViewer.CanContentScroll="True"
+                            >
+            </MuControls:MuBox>
+        <!--</ScrollViewer>-->
+
+        <TextBox x:Name="tbInputArea" Grid.Row="3" Text="{Binding MushTextInput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                Background="Black" TextWrapping="WrapWithOverflow" FocusManager.FocusedElement="{Binding ElementName=tbInputArea}"
+                Focusable="True" Foreground="LightGray" VerticalContentAlignment="Top" AcceptsReturn="True" 
+                 Loaded="tbInputArea_Loaded" FontFamily="Courier New" FontSize="12" TabIndex="1">
+            <TextBox.InputBindings>
+                <KeyBinding Key="Enter" Command="{Binding SubmitTextEnterKeyCommand}" />
+            </TextBox.InputBindings>
+        </TextBox>
+    </Grid>
+</UserControl>

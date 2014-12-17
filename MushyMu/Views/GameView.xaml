@@ -4,107 +4,183 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:model="clr-namespace:MushyMu.Model"
+        xmlns:e="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         xmlns:MuControls="clr-namespace:MushyMu.Controls"
         xmlns:ignore="http://www.ignore.com"
+        xmlns:dd="clr-namespace:GongSolutions.Wpf.DragDrop;assembly=GongSolutions.Wpf.DragDrop"
         mc:Ignorable="d ignore"
         d:DesignHeight="600" d:DesignWidth="1000">
+    
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+    </UserControl.Resources>
 
     <Grid x:Name="InputOutputGrid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition Height="50"/>
-            <RowDefinition Height="80*" />
-            <RowDefinition Height="20*" />
+            <RowDefinition Height="75*" />
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="25*" />
         </Grid.RowDefinitions>
-
-        <Grid Grid.Row="0" Background="Black">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="80*"/>
+            <ColumnDefinition Width="20*"/>
+        </Grid.ColumnDefinitions>
+        <Grid Grid.Row="0" Grid.ColumnSpan="2" Background="Black">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="250" />
-                <ColumnDefinition Width="50" />
-                <ColumnDefinition Width="250" />
-                <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="60" />
                 <ColumnDefinition Width="60"/>
                 <ColumnDefinition Width="60"/>
                 <ColumnDefinition Width="60"/>
                 <ColumnDefinition Width="60"/>
+                <ColumnDefinition Width="60"/>
+                <ColumnDefinition Width="60"/>
+                <ColumnDefinition Width="60"/>
+                <ColumnDefinition Width="60"/>
+                
             </Grid.ColumnDefinitions>
-                <TextBox Grid.Column="0" x:Name="tbName" Controls:TextboxHelper.ClearTextButton="True" FontFamily="Arial" FontSize="20" Height="40"
+                <TextBox Grid.Column="0" x:Name="tbSearch" Controls:TextboxHelper.ClearTextButton="True" FontFamily="Arial" FontSize="20" Height="40"
                      VerticalAlignment="Center" VerticalContentAlignment="Center" Visibility="Visible" HorizontalAlignment="Left"
                      BorderBrush="Black"  Width="250" Margin="0,0,0,0" Controls:TextboxHelper.Watermark="Search text..." Text="{Binding SearchValue, Mode=TwoWay}"/>
             <Button Grid.Column="1" Content="" FontFamily="Segoe UI Symbol" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" 
-                    FontSize="18" Height="50" Width="50" Margin="0,0,0,0" Command="{Binding SearchText}"
+                    FontSize="16pt" Height="50" Width="50" Margin="0,0,0,0" Click="Search_Click"
                     Style="{DynamicResource MetroCircleButtonStyle}" />
-            <ComboBox Grid.Column="2" Margin="10,0,0,0" SelectedValue="{Binding SelectedFont, Mode=TwoWay}" Height="40"
-          xmlns:ComponentModel="clr-namespace:System.ComponentModel;assembly=WindowsBase"
-          ItemTemplate="{DynamicResource FontTemplate}">
-                <ComboBox.Resources>
-
-                    <CollectionViewSource x:Key="myFonts" Source="{Binding Source={x:Static Fonts.SystemFontFamilies}}">
-                        <CollectionViewSource.SortDescriptions>
-                            <ComponentModel:SortDescription PropertyName="Source" />
-                        </CollectionViewSource.SortDescriptions>
-                    </CollectionViewSource>
-
-                    <Style x:Key="FontStyle">
-                        <Setter Property="Control.FontFamily" Value="{Binding Source}" />
-                        <Setter Property="Control.FontSize" Value="16" />
-                    </Style>
-
-                    <DataTemplate x:Key="FontTemplate">
-                        <StackPanel VirtualizingStackPanel.IsVirtualizing="True">
-                            <TextBlock Style="{StaticResource FontStyle}"
-                           Text="{Binding Source}"
-                           ToolTip="{Binding Source}" />
-                        </StackPanel>
-                    </DataTemplate>
-
-                </ComboBox.Resources>
-
-                <ComboBox.ItemsSource>
-                    <Binding Source="{StaticResource myFonts}" />
-                </ComboBox.ItemsSource>
-            </ComboBox>
-            <ComboBox ItemsSource="{Binding FontSizes}" SelectedItem="{Binding FontSize}" Grid.Column="3" Margin="10,0,0,0"
-                      Height="40" Width="80" FontSize="18"/>
-            <Button Grid.Column="4" Content="ç"  FontFamily="Wingdings" FontSize="30" Command="{Binding Path=InputHistoryFlyOut}"
+            
+            <Button Grid.Column="2" Content=""  FontFamily="Segoe UI Symbol" FontSize="16pt" Command="{Binding Path=InputHistoryFlyOut}"
                         HorizontalAlignment="Right" Height="50" Width="50" Margin="0,0,0,0" HorizontalContentAlignment="Center"
-                        Style="{DynamicResource MetroCircleButtonStyle}" VerticalContentAlignment="Center" Padding="0,0,0,0"/>
-            <Button Grid.Column="5" Content=""  FontFamily="Segoe UI Symbol" FontSize="30" Command="{Binding Path=GameSettingsFlyOut}"
+                        Style="{DynamicResource MetroCircleButtonStyle}" VerticalContentAlignment="Center" Padding="1,0,1,0" ToolTip="Previous Commands"/>
+            
+            <Button Grid.Column="3" Content=""  FontFamily="Segoe UI Symbol" FontSize="18pt" Command="{Binding Path=GameSettingsFlyOut}"
                         HorizontalAlignment="Right" Height="50" Width="50" Margin="0,0,0,0" HorizontalContentAlignment="Center"
-                        Style="{DynamicResource MetroCircleButtonStyle}" VerticalContentAlignment="Center" Padding="1,0,0,0"/>
+                        Style="{DynamicResource MetroCircleButtonStyle}" VerticalContentAlignment="Center" Padding="0,0,0,0" ToolTip="Game Settings"/>
 
-            <Button Grid.Column="6" Content=""  FontFamily="Segoe UI Symbol" FontSize="30" Command="{Binding Path=CommonCmdsFlyOut}"
+            <Button Grid.Column="4" Content="Ⲷ"  FontFamily="Segoe UI Symbol" FontSize="20pt" Command="{Binding Path=CommonCmdsFlyOut}"
                         HorizontalAlignment="Right" Height="50" Width="50" Margin="0,0,0,0" HorizontalContentAlignment="Center"
-                        Style="{DynamicResource MetroCircleButtonStyle}" VerticalContentAlignment="Center" Padding="0,0,0,0"/>
-            <Button Grid.Column="7" Content="ⲷ"  FontFamily="Segoe UI Symbol" FontSize="30" Command="{Binding Path=SwitchGamesFlyOut}"
-                        HorizontalAlignment="Right" Height="50" Width="50" Margin="0,0,0,0" HorizontalContentAlignment="Center"
-                        Style="{DynamicResource MetroCircleButtonStyle}" VerticalContentAlignment="Center" Padding="0,0,0,9"/>
+                        Style="{DynamicResource MetroCircleButtonStyle}" VerticalContentAlignment="Center" Padding="0,0,1,2" ToolTip="Common Commands"/>
 
+            <Button Grid.Column="5" Content=""  FontFamily="Segoe UI Symbol" FontSize="20pt" Command="{Binding Path=OpenTextEditor}"
+                        HorizontalAlignment="Right" Height="50" Width="50" Margin="0,0,0,0" HorizontalContentAlignment="Center"
+                        Style="{DynamicResource MetroCircleButtonStyle}" VerticalContentAlignment="Center" Padding="0,0,0,0" ToolTip="Text Editor"/>
+
+            <Button Grid.Column="6" Content=""  FontFamily="Segoe UI Symbol" FontSize="16pt" Command="{Binding Path=Reconnect}"
+                        HorizontalAlignment="Right" Height="50" Width="50" Margin="0,0,0,0" HorizontalContentAlignment="Center" Foreground="{Binding ReconnectColor}"
+                        Style="{DynamicResource MetroCircleButtonStyle}" VerticalContentAlignment="Center" Padding="0,0,0,0" ToolTip="Reconnect"/>
+
+
+            <Button Grid.Column="7" Content=""  FontFamily="Segoe UI Symbol" FontSize="22pt" Command="{Binding Path=CloseGame}"
+                        HorizontalAlignment="Right" Height="50" Width="50" Margin="0,0,0,0" HorizontalContentAlignment="Center" Foreground="{Binding DisconnectColor}"
+                        Style="{DynamicResource MetroCircleButtonStyle}" VerticalContentAlignment="Center" Padding="0,0,0,2" ToolTip="Close Game"/>
+
+            
 
         </Grid>
-        <!--<ScrollViewer Name="ScrollBar" IsEnabled="True" PanningMode="VerticalOnly" VerticalScrollBarVisibility="Auto" Grid.Row="1">-->
-            <MuControls:MuBox Grid.Row="1" Background="Black" VerticalContentAlignment="Top" Foreground="LightGray"
-                            VerticalAlignment="Stretch" Document="{Binding MushTextStream, Mode=OneWay}" x:Name="fdrOutputArea"
-                            VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Hidden" IsSelectionEnabled="True"
-                            IsHitTestVisible="True" RequestBringIntoView="fdrOutputArea_RequestBringIntoView" IsEnabled="True"
-                            FontFamily="{Binding SelectedFont, Mode=TwoWay}" FontSize="{Binding FontSize, Mode=TwoWay}"
-                            ScrollViewer.PanningMode="VerticalOnly" ScrollViewer.CanContentScroll="True"
-                            Padding="0,0,0,0">
-            <MuControls:MuBox.Resources>
-                <Style TargetType="{x:Type Paragraph}">
-                    <Setter Property="Margin" Value="0"/>
-                </Style>
-            </MuControls:MuBox.Resources>
-            </MuControls:MuBox>
-        <!--</ScrollViewer>-->
+        <Grid Grid.Row="1" Grid.ColumnSpan="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <!--<ColumnDefinition Width="5"/>-->
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <ScrollViewer Visibility="Visible" x:Name="MuScroll" ScrollChanged="MuScroll_ScrollChanged" PanningMode="VerticalOnly">
+                <!--<e:Interaction.Behaviors>
+                    <MuControls:ScrollViewerHelper UpdateTrigger="{Binding ElementName=RTBOutputArea,Path=Document}" />
+                </e:Interaction.Behaviors>-->
+                <MuControls:MuRTB Grid.Column="0" Document="{Binding MushTextStream,Mode=OneWay}" x:Name="RTBOutputArea" VerticalAlignment="Stretch" 
+                                  HorizontalAlignment="Stretch" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Disabled"
+                                  VerticalContentAlignment="Top" HorizontalContentAlignment="Left" IsHitTestVisible="True" IsEnabled="True" IsReadOnly="True" 
+                                  Background="Black" BorderThickness="0" Padding="0,0,0,5"  RequestBringIntoView="RTBOutputArea_RequestBringIntoView"
+                                  >
+                    <MuControls:MuRTB.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Command="ApplicationCommands.Copy"/>
+                            <MenuItem Header="Insert Bookmark" Command="{Binding InsertBookMark}"/>
+                        </ContextMenu>
+                    </MuControls:MuRTB.ContextMenu>
+                    <MuControls:MuRTB.Resources>
+                        <Style TargetType="{x:Type Paragraph}">
+                            <Setter Property="Margin" Value="0"/>
+                            <Setter Property="KeepWithNext" Value="True" />
+                            <Setter Property="KeepTogether" Value="True" />
+                        </Style>
+                    </MuControls:MuRTB.Resources>
+                   </MuControls:MuRTB>
+            </ScrollViewer>
 
-        <TextBox x:Name="tbInputArea" Grid.Row="3" Text="{Binding MushTextInput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                Background="Black" TextWrapping="WrapWithOverflow" FocusManager.FocusedElement="{Binding ElementName=tbInputArea}"
-                Focusable="True" Foreground="LightGray" VerticalContentAlignment="Top" AcceptsReturn="True" 
-                 Loaded="tbInputArea_Loaded" FontFamily="Courier New" FontSize="12" TabIndex="1">
+            <!--<GridSplitter Grid.Column="1" ResizeDirection="Columns"
+                      Width="5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                <GridSplitter.Style>
+                    <Style TargetType="{x:Type GridSplitter}">
+                        <Setter Property="Background" Value="Transparent"/>
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="Black"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </GridSplitter.Style>
+            </GridSplitter>-->
+            <Expander Grid.Column="2" ExpandDirection="Left" IsExpanded="True" >
+                
+                <ListBox x:Name="lbxConnectedGames" DataContext="{Binding Main, Source={StaticResource Locator}}" Background="Black" 
+                     Grid.Column="2" BorderThickness="0"
+                     ItemsSource="{Binding GameVMList}" SelectedIndex="{Binding SelectedGame, Mode=TwoWay}"
+                     IsSynchronizedWithCurrentItem="True" dd:DragDrop.IsDragSource="True" dd:DragDrop.IsDropTarget="True">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="40"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="50*"/>
+                                    <RowDefinition Height="50*"/>
+                                </Grid.RowDefinitions>
+                            
+                                <TextBlock Text="New Activity!" Grid.ColumnSpan="2" Grid.Row="1" FontFamily="Segoe" FontSize="14pt" HorizontalAlignment="Left" VerticalAlignment="Center"
+                                           Visibility="{Binding HasNewMessage, Converter={StaticResource BoolToVis}, Mode=TwoWay}" 
+                                           FontWeight="ExtraBold" Foreground="Yellow" />
+                                <TextBlock Text="{Binding MushName}" Grid.Column="0" Grid.Row="0" FontFamily="Segoe UI" FontSize="12pt" 
+                                           Width="Auto" VerticalAlignment="Center" Margin="0,0,15,0"/>
+                                <Button x:Name="CloseGameFromListButton" Grid.Column="1" Grid.Row="0" Content="" VerticalAlignment="Center" Width="35"
+                                    VerticalContentAlignment="Center" Style="{StaticResource AccentedSquareButtonStyle}" BorderThickness="0"
+                                    FontFamily="Segoe UI Symbol" Margin="5,0,0,0" FontSize="12pt" BorderBrush="Black"
+                                    Command="{Binding Path=DataContext.CloseGameFromList, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ListBox}}}" 
+                                    CommandParameter="{Binding}" />
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Expander>
+        </Grid>
+        <GridSplitter Grid.Row="2" Grid.ColumnSpan="2" ResizeDirection="Rows" Height="5" Width="Auto" 
+                      VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+            <GridSplitter.Style>
+                <Style TargetType="{x:Type GridSplitter}">
+                    <Setter Property="Background" Value="Transparent"/>
+                    <!--<Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="DimGray"/>
+                        </Trigger>
+                    </Style.Triggers>-->
+                </Style>
+            </GridSplitter.Style>
+        </GridSplitter>
+        
+        <TextBox x:Name="tbInputArea" Grid.Row="3" Grid.ColumnSpan="2" Text="{Binding MushTextInput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                 Background="Black" TextWrapping="WrapWithOverflow" FocusManager.FocusedElement="{Binding ElementName=tbInputArea}"
+                 Focusable="True" Foreground="LightGray" VerticalContentAlignment="Top" AcceptsReturn="True" BorderBrush="{DynamicResource AccentColorBrush}"
+                 Loaded="tbInputArea_Loaded" FontFamily="Courier New" FontSize="12pt" TabIndex="1" BorderThickness="1"
+                 Controls:TextboxHelper.IsSpellCheckContextMenuEnabled="True"
+                 Controls:TextboxHelper.ClearTextButton="True">
             <TextBox.InputBindings>
                 <KeyBinding Key="Enter" Command="{Binding SubmitTextEnterKeyCommand}" />
+                <KeyBinding Key="PageUp" Command="{Binding PageUpKeyCommand}" />
+                <KeyBinding Key="PageDown" Command="{Binding PageDownKeyCommand}" />
+                <KeyBinding Key="Up" Modifiers="Control" Command="{Binding OpenPreviousCommandFlyOut}" />
             </TextBox.InputBindings>
         </TextBox>
+        
     </Grid>
 </UserControl>

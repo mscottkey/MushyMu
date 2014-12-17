@@ -13,6 +13,7 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
 using Microsoft.Practices.ServiceLocation;
 using MushyMu.Model;
+using System;
 
 namespace MushyMu.ViewModel
 {
@@ -79,7 +80,23 @@ namespace MushyMu.ViewModel
         {
             get
             {
-                return ServiceLocator.Current.GetInstance<GameViewModel>();
+                return ServiceLocator.Current.GetInstance<GameViewModel>(Guid.NewGuid().ToString());
+            }
+        }
+
+        public TextEditorViewModel TextEditor
+        {
+            get
+            {
+                try
+                { 
+                    return ServiceLocator.Current.GetInstance<TextEditorViewModel>(Guid.NewGuid().ToString());
+                }
+                catch(Exception ex)
+                {
+                    Console.WriteLine(ex);
+                    return null;
+                }
             }
         }
 
@@ -88,6 +105,7 @@ namespace MushyMu.ViewModel
         /// </summary>
         public static void Cleanup()
         {
+            
         }
     }
 }

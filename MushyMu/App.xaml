@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
              xmlns:vm="clr-namespace:MushyMu.ViewModel" 
              xmlns:views="clr-namespace:MushyMu.Views" 
+             xmlns:controls="clr-namespace:MushyMu.Controls"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              StartupUri="MainWindow.xaml" mc:Ignorable="d">
@@ -12,8 +13,13 @@
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Colors.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Crimson.xaml" />
+                <!--<ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Crimson.xaml" />-->
+          
+                <!--Define Dark Theme here. For now not supporting Light Theme-->
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseDark.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MushyMu;component/Controls/BrowseFileTextBox.xaml"/>
+                <ResourceDictionary Source="Controls/ScrollBar.xaml"></ResourceDictionary>
+          
                 <!--<ResourceDictionary Source="/Elysium;component/Themes/Generic.xaml" />-->
         <!--<ResourceDictionary Source="/FirstFloor.ModernUI;component/Assets/ModernUI.xaml" />
                 <ResourceDictionary Source="/FirstFloor.ModernUI;component/Assets/ModernUI.Light.xaml"/>-->
@@ -25,12 +31,13 @@
             <!--DataTemplate <DataType="{x:Type vm:GameContainerViewModel}">
         <views:GameContainerView />
       </DataTemplate>-->
-      <DataTemplate DataType="{x:Type vm:GameViewModel}">
+      <DataTemplate x:Shared="False" DataType="{x:Type vm:GameViewModel}">
         <views:GameView />
       </DataTemplate>
       <DataTemplate DataType="{x:Type vm:NewGameViewModel}">
         <views:NewGameView />
       </DataTemplate>
+            
             <!--<vm:ViewModelLocator x:Key="Locator" d:IsDataSource="True" />-->
         </ResourceDictionary>
   </Application.Resources>

@@ -57,8 +57,12 @@ namespace MushyMu.ViewModel
                      document.Element("root").Element("games").Add(new XElement("game",
                      new XElement("name", _quickConnectName),
                      new XElement("host", _quickConnectHost),
-                     new XElement("port", _quickConnectPort)));
-
+                     new XElement("port", _quickConnectPort),
+                     new XElement("font", "Courier New"),
+                     new XElement("fontsize", 12),
+                     new XElement("charname", _quickConnectCharName),
+                     new XElement("password", _quickConnectPassword)));
+                    
                      document.Save(gamesXMLpath);
 
                      _games = ListGames();
@@ -93,18 +97,20 @@ namespace MushyMu.ViewModel
         {
             if (_quickConnectName == null && _quickConnectHost == null && _quickConnectPort == null)
             {
-                Messenger.Default.Send(new NotificationMessage("DialogIncompleteCnnectionInformation"));
+                Messenger.Default.Send(new NotificationMessage("InvalidConnectInfo"));
             }
             else
             {
-                var msg = new Game() { Name = _quickConnectName, Host = _quickConnectHost, Port = Convert.ToInt32(_quickConnectPort), ID = Guid.NewGuid() };
+                var msg = new Game() { Name = _quickConnectName, Host = _quickConnectHost, Port = Convert.ToInt32(_quickConnectPort), ID = Guid.NewGuid(), Font = "Courier New", FontSize = 12, 
+                    CharName = _quickConnectCharName, Password = _quickConnectPassword };
                 Messenger.Default.Send<Game>(msg, "StartGame");
             }
         }
 
         private void ExecuteOpenGameCommand(Game g)
         {
-            var msg = new Game() { Name = g.Name, Host = g.Host, Port = g.Port, ID = Guid.NewGuid() };
+            var msg = new Game() { Name = g.Name, Host = g.Host, Port = g.Port, ID = Guid.NewGuid(), Font = g.Font, FontSize=g.FontSize,
+                CharName = g.CharName, Password = g.Password };
             Messenger.Default.Send<Game>(msg, "StartGame");
         }
         
@@ -144,6 +150,30 @@ namespace MushyMu.ViewModel
                 RaisePropertyChanged("QuickConnectPort");
             }
         }
+
+        private string _quickConnectCharName;
+
+        public string QuickConnectCharName
+        {
+            get { return _quickConnectCharName; }
+            set
+            {
+                _quickConnectCharName = value;
+                RaisePropertyChanged("QuickConnectCharName");
+            }
+        }
+       
+        private string _quickConnectPassword;
+
+        public string QuickConnectPassword
+        {
+            get { return _quickConnectPassword; }
+            set
+            {
+                _quickConnectPassword = value;
+                RaisePropertyChanged("QuickConnectPassword");
+            }
+        }
         
         // Generate List of Games from the settings XML file in Program Data.
         // May need to handle putting this in AppData or Documents instead for easier access.
@@ -164,6 +194,10 @@ namespace MushyMu.ViewModel
                 g.Name = n.SelectSingleNode("name").InnerText;
                 g.Host = n.SelectSingleNode("host").InnerText;
                 g.Port = Convert.ToInt32(n.SelectSingleNode("port").InnerText);
+                g.Font = n.SelectSingleNode("font").InnerText;
+                g.FontSize = Convert.ToInt32(n.SelectSingleNode("fontsize").InnerText);
+                g.CharName = n.SelectSingleNode("charname").InnerText;
+                g.Password = n.SelectSingleNode("password").InnerText;
 
                 _games.Add(g);
             }

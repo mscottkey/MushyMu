@@ -14,6 +14,9 @@ namespace MushyMu.Model
         public SolidColorBrush ForegroundColor;
         public SolidColorBrush BackgroundColor;
         //public bool UnderLined;
+
+        
+       
     }
 
 
@@ -27,15 +30,21 @@ namespace MushyMu.Model
         //current settings (with defaults)
 
         private SolidColorBrush foregroundColor = Brushes.LightGray;
-        private SolidColorBrush backgroundColor = Brushes.Black;
+        private SolidColorBrush backgroundColor = null;
         //private bool underLined = false;
         private bool brightColors = true;
-
+        //Setup Values to build on if Ansi Codes are stacked.
+        public int fgColorCode;
+        public int bgColorCode;
+        public SolidColorBrush fgColor;
+        public SolidColorBrush bgColor;
+        public bool isHighlighted;
+        public bool isInverted;
 
         //scans incoming text for ANSI control sequences, parses them, and returns a list of styled text runs
         public List<AnsiTextRun> Parse(string text)
         {
-            System.Diagnostics.Debug.WriteLine(text);
+            //System.Diagnostics.Debug.WriteLine(text);
             //start with an empty list of runs
             List<AnsiTextRun> returnRuns = new List<AnsiTextRun>();
 
@@ -102,15 +111,25 @@ namespace MushyMu.Model
                     //assume the next run will continue until the end of the string, until proven otherwise
                     runEndIndex = text.Length - 1;
 
+
+                    //Finally call up the color list
+                    AnsiColorDictionary colorList = new AnsiColorDictionary();
+
+                    int i = 0;
                     //parameters will determine the style of the next run, and there may be several parameters
                     foreach (int param in arguments)
                     {
+                        //Increase counter
+                        i++;
                         //reset to defaults
                         if (param == 0)
                         {
-                            this.brightColors = false;
-                            this.foregroundColor = Brushes.LightGray;
-                            this.backgroundColor = Brushes.Black;
+                            this.isHighlighted = false;
+                            this.isInverted = false;
+                            this.fgColor = new SolidColorBrush(Color.FromRgb(177, 177, 177));
+                            this.bgColor = Brushes.Black;
+                            this.fgColorCode = 0;
+                            this.bgColorCode = 0;
                         }
 
                         ////Start with Bold, Underline, Italics
@@ -120,100 +139,109 @@ namespace MushyMu.Model
                         //}
 
                         //bright colors on
-                        if (param == 1)
+                        //if (param == 1)
+                        //{
+                        //    this.brightColors = true;
+                        //    this.isHighlighted = true;
+                        //}
+
+                        ////bright colors off
+                        //else if (param == 22)
+                        //{
+                        //    this.brightColors = false;
+                        //    this.isHighlighted = false;
+                        //}
+
+                        else if (param >= 30 && param <= 37)
                         {
-                            this.brightColors = true;
+                            if (i == 1 || i == 2)
+                            {
+                                if (isHighlighted == true)
+                                {
+                                    if (isInverted == true)
+                                    {
+                                        //Highlighted and inverted
+                                        bgColorCode = colorList[param + 1000].ColorCode;
+                                        bgColor = colorList[param + 1000].RGB;
+
+                                    }
+                                    else
+                                    {
+                                        //Highlighted foreground color not inverted
+                                        fgColorCode = colorList[param + 1000].ColorCode;
+                                        fgColor = colorList[param + 1000].RGB;
+                                    }
+                                }
+
+                                else if (isInverted == true)
+                                {
+                                    //Inverted and not highlighted
+                                    bgColorCode = colorList[param].ColorCode;
+                                    bgColor = colorList[param].RGB;
+                                }
+                                else
+                                {
+                                    //Regular foreground color
+                                    fgColorCode = colorList[param].ColorCode;
+                                    fgColor = colorList[param].RGB;
+                                }
+                            }
+                        }
+                        else if (param >= 40 && param <= 47)
+                        {
+                            if (i == 1 || i == 2)
+                            {
+                                if (isHighlighted == true)
+                                {
+                                    if (isInverted == true)
+                                    {
+                                        //Highlighted and inverted
+                                        fgColorCode = colorList[param + 1000].ColorCode;
+                                        fgColor = colorList[param + 1000].RGB;
+
+                                    }
+                                    else
+                                    {
+                                        //Highlighted foreground color not inverted
+                                        bgColorCode = colorList[param + 1000].ColorCode;
+                                        bgColor = colorList[param + 1000].RGB;
+                                    }
+                                }
+                                else if (isInverted == true)
+                                {
+                                    //Inverted and not highlighted
+                                    fgColorCode = colorList[param].ColorCode;
+                                    fgColor = colorList[param].RGB;
+                                }
+                                else
+                                {
+                                    //Regular foreground color
+                                    bgColorCode = colorList[param].ColorCode;
+                                    bgColor = colorList[param].RGB;
+                                }
+                            }
                         }
 
-                        //bright colors off
+                        else if (param == 1)
+                        {
+                            isHighlighted = true;
+                            if (fgColorCode > 0 && fgColorCode != 38 && fgColorCode != 48)
+                            {
+                                fgColor = colorList[fgColorCode + 1000].RGB;
+                            }
+                        }
+
                         else if (param == 22)
-                            this.brightColors = false;
-
-                        //set foreground color
-                        else if (param == 30)
                         {
-                            this.foregroundColor = new SolidColorBrush(Color.FromRgb(0, 0, 0));
-                            if (this.brightColors) this.foregroundColor = new SolidColorBrush(Color.FromRgb(127, 127, 217));
+                            isHighlighted = false;
                         }
 
-                        else if (param == 31)
+                        //Code 7 = Inverted colors
+                        else if (param == 7)
                         {
-                            this.foregroundColor = new SolidColorBrush(Color.FromRgb(205,0,0));
-                            if (this.brightColors) this.foregroundColor = new SolidColorBrush(Color.FromRgb(255, 0, 0));
+                            isInverted = true;
                         }
-                        else if (param == 32)
-                        {
-                            this.foregroundColor = new SolidColorBrush(Color.FromRgb(0, 205, 0));
-                            if (this.brightColors) this.foregroundColor = new SolidColorBrush(Color.FromRgb(0, 255, 0));
-                        }
-                        else if (param == 33)
-                        {
-                            this.foregroundColor = new SolidColorBrush(Color.FromRgb(205, 205, 0));
-                            if (this.brightColors) this.foregroundColor = new SolidColorBrush(Color.FromRgb(255, 255, 0));
-                        }
-                        else if (param == 34)
-                        {
-                            this.foregroundColor = new SolidColorBrush(Color.FromRgb(0, 0, 238));
-                            if (this.brightColors) this.foregroundColor = new SolidColorBrush(Color.FromRgb(92, 92, 255));
-                        }
-                        else if (param == 35)
-                        {
-                            this.foregroundColor = new SolidColorBrush(Color.FromRgb(205, 0, 205));
-                            if (this.brightColors) this.foregroundColor = new SolidColorBrush(Color.FromRgb(255, 0, 255));
-                        }
-                        else if (param == 36)
-                        {
-                            this.foregroundColor = new SolidColorBrush(Color.FromRgb(0, 205, 205));
-                            if (this.brightColors) this.foregroundColor = new SolidColorBrush(Color.FromRgb(0, 255, 255));
-                        }
-                        else if (param == 37)
-                        {
-                            this.foregroundColor = new SolidColorBrush(Color.FromRgb(229, 229, 229));
-                            if (this.brightColors) this.foregroundColor = new SolidColorBrush(Color.FromRgb(255, 255, 255));
-                        }
-
-                        //set background color
-                        else if (param == 40)
-                        {
-                            this.foregroundColor = new SolidColorBrush(Color.FromRgb(0, 0, 0));
-                            if (this.brightColors) this.foregroundColor = new SolidColorBrush(Color.FromRgb(127, 127, 217));
-                        }
-
-                        else if (param == 41)
-                        {
-                            this.foregroundColor = new SolidColorBrush(Color.FromRgb(205, 0, 0));
-                            if (this.brightColors) this.foregroundColor = new SolidColorBrush(Color.FromRgb(255, 0, 0));
-                        }
-                        else if (param == 42)
-                        {
-                            this.foregroundColor = new SolidColorBrush(Color.FromRgb(0, 205, 0));
-                            if (this.brightColors) this.foregroundColor = new SolidColorBrush(Color.FromRgb(0, 255, 0));
-                        }
-                        else if (param == 43)
-                        {
-                            this.foregroundColor = new SolidColorBrush(Color.FromRgb(205, 205, 0));
-                            if (this.brightColors) this.foregroundColor = new SolidColorBrush(Color.FromRgb(255, 255, 0));
-                        }
-                        else if (param == 44)
-                        {
-                            this.foregroundColor = new SolidColorBrush(Color.FromRgb(0, 0, 238));
-                            if (this.brightColors) this.foregroundColor = new SolidColorBrush(Color.FromRgb(92, 92, 255));
-                        }
-                        else if (param == 45)
-                        {
-                            this.foregroundColor = new SolidColorBrush(Color.FromRgb(205, 0, 205));
-                            if (this.brightColors) this.foregroundColor = new SolidColorBrush(Color.FromRgb(255, 0, 255));
-                        }
-                        else if (param == 46)
-                        {
-                            this.foregroundColor = new SolidColorBrush(Color.FromRgb(0, 205, 205));
-                            if (this.brightColors) this.foregroundColor = new SolidColorBrush(Color.FromRgb(0, 255, 255));
-                        }
-                        else if (param == 47)
-                        {
-                            this.foregroundColor = new SolidColorBrush(Color.FromRgb(229, 229, 229));
-                            if (this.brightColors) this.foregroundColor = new SolidColorBrush(Color.FromRgb(255, 255, 255));
-                        }
+                        
                         //default background color
                         else if (param == 49)
                         {
@@ -224,21 +252,29 @@ namespace MushyMu.Model
                         //default foreground color
                         else if (param == 39)
                         {
-                            this.foregroundColor = Brushes.LightGray;
+                            this.foregroundColor = new SolidColorBrush(Color.FromRgb(177, 177, 177));
                             if (this.brightColors) this.foregroundColor = Brushes.White;
                         }
 
                         //handle xterm foreground here
                         else if (param == 38)
                         {
-                            //Grab 3rd item from array
-                            int xterm = arguments[3];
-                            if (xterm == 000)
-                            {
-                                this.foregroundColor = (SolidColorBrush)(new BrushConverter().ConvertFrom("#000000"));
-                            }
+                            fgColorCode = 38;
+                            int xterm = arguments[2];
+                            fgColor = colorList[2000 + xterm].RGB;
+                            
                         }
+
+                        else if (param == 48)
+                        {
+                            bgColorCode = 48;
+                            int xterm = arguments[2];
+                            bgColor = colorList[2000 + xterm].RGB;
+                        }
+                            
                     }
+                    this.foregroundColor = fgColor;
+                    this.backgroundColor = bgColor;
                 }
 
                 //if the ansi control sequence has an unsupported operation code, show it in the UI highlighted in a bright color
