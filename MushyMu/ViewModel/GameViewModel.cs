@@ -198,9 +198,8 @@ namespace MushyMu.ViewModel
 
         private void ExecuteInputHistoryFlyOut()
         {
-            _inputHistoryFlyOutState = true;
-            RaisePropertyChanged("InputHistoryFlyOutState");
-        
+            InputHistoryFlyOutState = true;
+            //SelectedInputHistoryItem = -1;
         }
 
         public void ExecuteCommonCmdsFlyOut()
@@ -270,11 +269,10 @@ namespace MushyMu.ViewModel
         private object ExecuteSubmitTextEnterKeyCommand()
         {
             var _text = _mushTextInput;
-            _mushTextInput = String.Empty;
-            RaisePropertyChanged("MushTextInput");
+            MushTextInput = String.Empty;
             Send(_text);
-            _inputHistory.Insert(0, _text);
-            RaisePropertyChanged("InputHistory");
+            InputHistory.Insert(0, _text);
+            //SelectedInputHistoryItem = -1;
             return null;
         }
 
@@ -538,13 +536,27 @@ namespace MushyMu.ViewModel
 
         private void SubmitInputHistoryItem(int _selectedInputHistoryItem)
         {
-            var cmd = _inputHistory[_selectedInputHistoryItem];
-            _inputHistoryFlyOutState = false;
-            RaisePropertyChanged("InputHistoryFlyOutState");
-            _mushTextInput = cmd;
-            RaisePropertyChanged("MushTextInput");
-            Messenger.Default.Send(new NotificationMessage("ResetInputHistoryIndex"));
-            Messenger.Default.Send(new NotificationMessage("ResetTextBoxFocus"));
+            try
+            {
+                var cmd = _inputHistory[_selectedInputHistoryItem];
+                InputHistoryFlyOutState = false;
+                MushTextInput = cmd;
+                //Messenger.Default.Send(new NotificationMessage("ResetInputHistoryIndex"));
+                Messenger.Default.Send(new NotificationMessage("ResetTextBoxFocus"));
+                ResetInputHistorySelection();
+            }
+            catch (ArgumentOutOfRangeException e)
+            {
+                System.Console.WriteLine(e.Message);
+                //ResetInputHistorySelection();
+                
+            }
+            
+        }
+
+        private void ResetInputHistorySelection()
+        {
+            SelectedInputHistoryItem = -1;
         }
 
         private void SubmitSelectedCmd(MuCommand _selectedCmd)
@@ -880,6 +892,14 @@ namespace MushyMu.ViewModel
             {
                 return _inputHistory;
             }
+            set
+            {
+                if (_inputHistory != value)
+                {
+                    _inputHistory = value;
+                    RaisePropertyChanged("InputHistory");
+                }
+            }
         }
 
 
@@ -921,6 +941,7 @@ namespace MushyMu.ViewModel
             {
                 _inputHistoryFlyOutState = value;
                 RaisePropertyChanged("InputHistoryFlyOutState");
+                //Messenger.Default.Send(new NotificationMessage("ResetInputHistoryIndex"));
             }
         }
 
@@ -931,8 +952,17 @@ namespace MushyMu.ViewModel
             get { return _selectedInputHistoryItem; }
             set
             {
-                SubmitInputHistoryItem(value);
-                _selectedInputHistoryItem = -1;
+                if (_selectedInputHistoryItem == value)
+                {
+                    return;
+                }
+                _selectedInputHistoryItem = value;
+                RaisePropertyChanged("SelectedInputHistoryItem");
+                if( _selectedInputHistoryItem != -1)
+                {
+                    SubmitInputHistoryItem(value);
+                }
+                    
             }
         }
 

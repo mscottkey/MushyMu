@@ -11,6 +11,7 @@ using MushyMu.Controls;
 using System.Xml;
 using System.Linq;
 using MushyMu.Views;
+using System.Windows.Input;
 
 namespace MushyMu
 {
@@ -48,7 +49,7 @@ namespace MushyMu
                     case "FlashWindow":
                         ActiveFlashWindow();
                         break;
-
+                    
 
                     default:
                         break;
@@ -59,6 +60,7 @@ namespace MushyMu
 
         private void ResetInputHistoryIndex()
         {
+            //lbxInputHistory.SelectedIndex = -1;
             lbxInputHistory.UnselectAll();
         }
 

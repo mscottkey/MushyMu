@@ -58,7 +58,7 @@
                 <ListBox x:Name="lbxInputHistory" Background="Black" Grid.Column="1" BorderThickness="1" VerticalContentAlignment="Top"
                          ItemsSource="{Binding Path=CurrentGame.InputHistory, Mode=OneWay}" 
                          SelectedIndex="{Binding Path=CurrentGame.SelectedInputHistoryItem, Mode=TwoWay}"
-                         IsSynchronizedWithCurrentItem="True" FontSize="14" FontWeight="ExtraLight"/>
+                         IsSynchronizedWithCurrentItem="True" FontSize="16" FontWeight="ExtraLight"/>
             </Controls:Flyout>
             <Controls:Flyout Header="Game Settings" x:Name="GameSettings" Position="Right" Width="350"
                              IsOpen="{Binding Path=CurrentGame.GameSettingsFlyOutState, Mode=TwoWay}" IsPinned="False">

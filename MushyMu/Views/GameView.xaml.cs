@@ -64,6 +64,7 @@ namespace MushyMu.Views
         {
             Keyboard.Focus(tbInputArea);
             tbInputArea.Select(tbInputArea.Text.Length, 0);
+            tbInputArea.Text = String.Empty;
             MuScroll.UpdateLayout();
             MuScroll.ScrollToEnd();
         }
