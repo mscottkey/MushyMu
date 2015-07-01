@@ -37,6 +37,9 @@ namespace MushyMu.Views
                     case "ResetTextBoxFocus":
                         ResetTextBoxFocus();
                         break;
+                    case "ResetTextBox":
+                        ResetTextBox();
+                        break;
                     case "PageUpCommand":
                         PageUp();
                         break;
@@ -63,9 +66,15 @@ namespace MushyMu.Views
         private void ResetTextBoxFocus()
         {
             Keyboard.Focus(tbInputArea);
-            tbInputArea.Select(tbInputArea.Text.Length, 0);
-            tbInputArea.Text = String.Empty;
+            tbInputArea.CaretIndex = tbInputArea.Text.Length;
             MuScroll.UpdateLayout();
+            MuScroll.ScrollToEnd();
+        }
+
+        private void ResetTextBox()
+        {
+            Keyboard.Focus(tbInputArea);
+            tbInputArea.Text = String.Empty;
             MuScroll.ScrollToEnd();
         }
 

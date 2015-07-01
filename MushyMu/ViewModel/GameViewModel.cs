@@ -266,14 +266,15 @@ namespace MushyMu.ViewModel
             Messenger.Default.Send(new NotificationMessage("PageDownCommand"));
         }
 
-        private object ExecuteSubmitTextEnterKeyCommand()
+        private void ExecuteSubmitTextEnterKeyCommand()
         {
-            var _text = _mushTextInput;
-            MushTextInput = String.Empty;
+            var _text = MushTextInput;
             Send(_text);
+            MushTextInput = String.Empty;
             InputHistory.Insert(0, _text);
+            Messenger.Default.Send(new NotificationMessage("ResetTextBox"));
             //SelectedInputHistoryItem = -1;
-            return null;
+            //return null;
         }
 
         private void ExecuteOpenTextEditor()
@@ -541,7 +542,6 @@ namespace MushyMu.ViewModel
                 var cmd = _inputHistory[_selectedInputHistoryItem];
                 InputHistoryFlyOutState = false;
                 MushTextInput = cmd;
-                //Messenger.Default.Send(new NotificationMessage("ResetInputHistoryIndex"));
                 Messenger.Default.Send(new NotificationMessage("ResetTextBoxFocus"));
                 ResetInputHistorySelection();
             }

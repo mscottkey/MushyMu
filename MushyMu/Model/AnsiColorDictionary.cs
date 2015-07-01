@@ -1,0 +1,326 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Media;
+
+namespace MushyMu.Model
+{
+    public class AnsiColorDictionary : Dictionary<int, AnsiColor>
+    {
+
+        public AnsiColorDictionary()
+            : base()
+        {
+            //Foreground Colors
+            Add(30, new AnsiColor("BlackFG", 30, false, new SolidColorBrush(Color.FromRgb(54, 54, 54))));
+            Add(31, new AnsiColor("RedFG", 31, false, new SolidColorBrush(Color.FromRgb(128, 0, 0))));
+            Add(32, new AnsiColor("GreenFG", 32, false, new SolidColorBrush(Color.FromRgb(0, 128, 0))));
+            Add(33, new AnsiColor("YellowFG", 33, false, new SolidColorBrush(Color.FromRgb(128, 128, 0))));
+            Add(34, new AnsiColor("BlueFG", 34, false, new SolidColorBrush(Color.FromRgb(0, 0, 128))));
+            Add(35, new AnsiColor("MagentaFG", 35, false, new SolidColorBrush(Color.FromRgb(128, 0, 128))));
+            Add(36, new AnsiColor("CyanFG", 36, false, new SolidColorBrush(Color.FromRgb(0, 128, 128))));
+            Add(37, new AnsiColor("WhiteFG", 37, false, new SolidColorBrush(Color.FromRgb(229, 229, 229))));
+
+            //Background Colors
+            Add(40, new AnsiColor("BlackBG", 40, false, new SolidColorBrush(Color.FromRgb(54, 54, 54))));
+            Add(41, new AnsiColor("RedBG", 41, false, new SolidColorBrush(Color.FromRgb(128, 0, 0))));
+            Add(42, new AnsiColor("GreenBG", 42, false, new SolidColorBrush(Color.FromRgb(0, 128, 0))));
+            Add(43, new AnsiColor("YellowBG", 43, false, new SolidColorBrush(Color.FromRgb(128, 128, 0))));
+            Add(44, new AnsiColor("BlueBG", 44, false, new SolidColorBrush(Color.FromRgb(0, 0, 128))));
+            Add(45, new AnsiColor("MagentaBG", 45, false, new SolidColorBrush(Color.FromRgb(128, 0, 128))));
+            Add(46, new AnsiColor("CyanBG", 46, false, new SolidColorBrush(Color.FromRgb(0, 128, 128))));
+            Add(47, new AnsiColor("WhiteBG", 47, false, new SolidColorBrush(Color.FromRgb(229, 229, 229))));
+
+            //Highlighted Foreground
+            Add(1030, new AnsiColor("HLBlackFG", 30, true, new SolidColorBrush(Color.FromRgb(128, 128, 128))));
+            Add(1031, new AnsiColor("HLRedFG", 31, true, new SolidColorBrush(Color.FromRgb(255, 0, 0))));
+            Add(1032, new AnsiColor("HLGreenFG", 32, true, new SolidColorBrush(Color.FromRgb(0, 255, 0))));
+            Add(1033, new AnsiColor("HLYellowFG", 33, true, new SolidColorBrush(Color.FromRgb(255, 255, 0))));
+            Add(1034, new AnsiColor("HLBlueFG", 34, true, new SolidColorBrush(Color.FromRgb(0, 0, 255))));
+            Add(1035, new AnsiColor("HLMagentaFG", 35, true, new SolidColorBrush(Color.FromRgb(255, 0, 255))));
+            Add(1036, new AnsiColor("HLCyanFG", 36, true, new SolidColorBrush(Color.FromRgb(0, 255, 255))));
+            Add(1037, new AnsiColor("HLWhiteFG", 37, true, new SolidColorBrush(Color.FromRgb(255, 255, 255))));
+
+            //Highlighted Background
+            Add(1040, new AnsiColor("HLBlackBG", 40, true, new SolidColorBrush(Color.FromRgb(127, 127, 127))));
+            Add(1041, new AnsiColor("HLRedBG", 41, true, new SolidColorBrush(Color.FromRgb(255, 0, 0))));
+            Add(1042, new AnsiColor("HLGreenBG", 42, true, new SolidColorBrush(Color.FromRgb(0, 255, 0))));
+            Add(1043, new AnsiColor("HLYellowBG", 43, true, new SolidColorBrush(Color.FromRgb(255, 255, 0))));
+            Add(1044, new AnsiColor("HLBlueBG", 44, true, new SolidColorBrush(Color.FromRgb(92, 92, 255))));
+            Add(1045, new AnsiColor("HLMagentaBG", 45, true, new SolidColorBrush(Color.FromRgb(255, 0, 255))));
+            Add(1046, new AnsiColor("HLCyanBG", 46, true, new SolidColorBrush(Color.FromRgb(0, 255, 255))));
+            Add(1047, new AnsiColor("HLWhiteBG", 47, true, new SolidColorBrush(Color.FromRgb(255, 255, 255))));
+
+            //Xterm base 16
+            Add(2000, new AnsiColor("XTerm000", 000, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#000000"))));
+            Add(2001, new AnsiColor("XTerm001", 001, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#cd0000"))));
+            Add(2002, new AnsiColor("XTerm002", 002, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#00cd00"))));
+            Add(2003, new AnsiColor("XTerm003", 003, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#cdcd00"))));
+            Add(2004, new AnsiColor("XTerm004", 004, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#0000ee"))));
+            Add(2005, new AnsiColor("XTerm005", 005, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#cd00cd"))));
+            Add(2006, new AnsiColor("XTerm006", 006, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#00cdcd"))));
+            Add(2007, new AnsiColor("XTerm007", 007, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#e5e5e5"))));
+            Add(2008, new AnsiColor("XTerm008", 008, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#7f7f7f"))));
+            Add(2009, new AnsiColor("XTerm009", 009, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#ff0000"))));
+            Add(2010, new AnsiColor("XTerm010", 010, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#00ff00"))));
+            Add(2011, new AnsiColor("XTerm011", 011, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#ffff00"))));
+            Add(2012, new AnsiColor("XTerm012", 012, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#5c5cff"))));
+            Add(2013, new AnsiColor("XTerm013", 013, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#ff00ff"))));
+            Add(2014, new AnsiColor("XTerm014", 014, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#00ffff"))));
+            Add(2015, new AnsiColor("XTerm015", 015, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#ffffff"))));
+
+            //Xterm block 16-92
+            Add(2016, new AnsiColor("XTerm016", 016, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#000000"))));
+            Add(2017, new AnsiColor("XTerm017", 017, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#00005f"))));
+            Add(2018, new AnsiColor("XTerm018", 018, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#000087"))));
+            Add(2019, new AnsiColor("XTerm019", 019, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#0000af"))));
+            Add(2020, new AnsiColor("XTerm020", 020, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#0000d7"))));
+            Add(2021, new AnsiColor("XTerm021", 021, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#0000ff"))));
+            Add(2022, new AnsiColor("XTerm022", 022, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#005f00"))));
+            Add(2023, new AnsiColor("XTerm023", 023, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#005f5f"))));
+            Add(2024, new AnsiColor("XTerm024", 024, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#005f87"))));
+            Add(2025, new AnsiColor("XTerm025", 025, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#005faf"))));
+            Add(2026, new AnsiColor("XTerm026", 026, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#005fd7"))));
+            Add(2027, new AnsiColor("XTerm027", 027, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#005fff"))));
+            Add(2028, new AnsiColor("XTerm028", 028, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#008700"))));
+            Add(2029, new AnsiColor("XTerm029", 029, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#00875f"))));
+            Add(2030, new AnsiColor("XTerm030", 030, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#008787"))));
+            Add(2031, new AnsiColor("XTerm031", 031, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#0087af"))));
+            Add(2032, new AnsiColor("XTerm032", 032, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#0087d7"))));
+            Add(2033, new AnsiColor("XTerm033", 033, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#0087ff"))));
+            Add(2034, new AnsiColor("XTerm034", 034, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#00af00"))));
+            Add(2035, new AnsiColor("XTerm035", 035, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#00af5f"))));
+            Add(2036, new AnsiColor("XTerm036", 036, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#00af87"))));
+            Add(2037, new AnsiColor("XTerm037", 037, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#00afaf"))));
+            Add(2038, new AnsiColor("XTerm038", 038, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#00afd7"))));
+            Add(2039, new AnsiColor("XTerm039", 039, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#00afff"))));
+            Add(2040, new AnsiColor("XTerm040", 040, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#00d700"))));
+            Add(2041, new AnsiColor("XTerm041", 041, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#00d75f"))));
+            Add(2042, new AnsiColor("XTerm042", 042, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#00d787"))));
+            Add(2043, new AnsiColor("XTerm043", 043, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#00d7af"))));
+            Add(2044, new AnsiColor("XTerm044", 044, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#00d7d7"))));
+            Add(2045, new AnsiColor("XTerm045", 045, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#00d7ff"))));
+            Add(2046, new AnsiColor("XTerm046", 046, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#00ff00"))));
+            Add(2047, new AnsiColor("XTerm047", 047, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#00ff5f"))));
+            Add(2048, new AnsiColor("XTerm048", 048, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#00ff87"))));
+            Add(2049, new AnsiColor("XTerm049", 049, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#00ffaf"))));
+            Add(2050, new AnsiColor("XTerm050", 050, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#00ffd7"))));
+            Add(2051, new AnsiColor("XTerm051", 051, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#00ffff"))));
+            Add(2052, new AnsiColor("XTerm052", 052, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#5f0000"))));
+            Add(2053, new AnsiColor("XTerm053", 053, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#5f005f"))));
+            Add(2054, new AnsiColor("XTerm054", 054, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#5f0087"))));
+            Add(2055, new AnsiColor("XTerm055", 055, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#5f00af"))));
+            Add(2056, new AnsiColor("XTerm056", 056, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#5f00d7"))));
+            Add(2057, new AnsiColor("XTerm057", 057, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#5f00ff"))));
+            Add(2058, new AnsiColor("XTerm058", 058, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#5f5f00"))));
+            Add(2059, new AnsiColor("XTerm059", 059, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#5f5f5f"))));
+            Add(2060, new AnsiColor("XTerm060", 060, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#5f5f87"))));
+            Add(2061, new AnsiColor("XTerm061", 061, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#5f5faf"))));
+            Add(2062, new AnsiColor("XTerm062", 062, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#5f5fd7"))));
+            Add(2063, new AnsiColor("XTerm063", 063, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#5f5fff"))));
+            Add(2064, new AnsiColor("XTerm064", 064, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#5f8700"))));
+            Add(2065, new AnsiColor("XTerm065", 065, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#5f875f"))));
+            Add(2066, new AnsiColor("XTerm066", 066, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#5f8787"))));
+            Add(2067, new AnsiColor("XTerm067", 067, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#5f87af"))));
+            Add(2068, new AnsiColor("XTerm068", 068, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#5f87d7"))));
+            Add(2069, new AnsiColor("XTerm069", 069, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#5f87ff"))));
+            Add(2070, new AnsiColor("XTerm070", 070, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#5faf00"))));
+            Add(2071, new AnsiColor("XTerm071", 071, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#5faf5f")))); 
+            Add(2072, new AnsiColor("XTerm072", 072, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#5faf87"))));
+            Add(2073, new AnsiColor("XTerm073", 073, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#5fafaf"))));
+            Add(2074, new AnsiColor("XTerm074", 074, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#5fafd7"))));
+            Add(2075, new AnsiColor("XTerm075", 075, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#5fafff"))));
+            Add(2076, new AnsiColor("XTerm076", 076, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#5fd700"))));
+            Add(2077, new AnsiColor("XTerm077", 077, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#5fd75f"))));
+            Add(2078, new AnsiColor("XTerm078", 078, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#5fd787"))));
+            Add(2079, new AnsiColor("XTerm079", 079, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#5fd7af"))));
+            Add(2080, new AnsiColor("XTerm080", 080, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#5fd7d7"))));
+            Add(2081, new AnsiColor("XTerm081", 081, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#5fd7ff"))));
+            Add(2082, new AnsiColor("XTerm082", 082, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#5fff00"))));
+            Add(2083, new AnsiColor("XTerm083", 083, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#5fff5f"))));
+            Add(2084, new AnsiColor("XTerm084", 084, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#5fff87"))));
+            Add(2085, new AnsiColor("XTerm085", 085, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#5fffaf"))));
+            Add(2086, new AnsiColor("XTerm086", 086, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#5fffd7"))));
+            Add(2087, new AnsiColor("XTerm087", 087, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#5fd7ff"))));
+            Add(2088, new AnsiColor("XTerm088", 088, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#870000"))));
+            Add(2089, new AnsiColor("XTerm089", 089, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#87005f"))));
+            Add(2090, new AnsiColor("XTerm090", 090, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#870087"))));
+            Add(2091, new AnsiColor("XTerm091", 091, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#8700af"))));
+            Add(2092, new AnsiColor("XTerm092", 092, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#8700d7"))));
+
+            //Xterm block 93 - 159
+            Add(2093, new AnsiColor("XTerm093", 093, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#8700ff"))));
+            Add(2094, new AnsiColor("XTerm094", 094, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#875f00"))));
+            Add(2095, new AnsiColor("XTerm095", 095, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#875f5f"))));
+            Add(2096, new AnsiColor("XTerm096", 096, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#875f87"))));
+            Add(2097, new AnsiColor("XTerm097", 097, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#875faf"))));
+            Add(2098, new AnsiColor("XTerm098", 098, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#875fd7"))));
+            Add(2099, new AnsiColor("XTerm099", 099, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#875fff"))));
+            Add(2100, new AnsiColor("XTerm100", 100, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#878700"))));
+            Add(2101, new AnsiColor("XTerm101", 101, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#87875f"))));
+            Add(2102, new AnsiColor("XTerm102", 102, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#878787"))));
+            Add(2103, new AnsiColor("XTerm103", 103, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#8787af"))));
+            Add(2104, new AnsiColor("XTerm104", 104, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#8787d7"))));
+            Add(2105, new AnsiColor("XTerm105", 105, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#8787ff"))));
+            Add(2106, new AnsiColor("XTerm106", 106, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#87af00"))));
+            Add(2107, new AnsiColor("XTerm107", 107, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#87af5f"))));
+            Add(2108, new AnsiColor("XTerm108", 108, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#87af87"))));
+            Add(2109, new AnsiColor("XTerm109", 109, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#87afaf"))));
+            Add(2110, new AnsiColor("XTerm110", 110, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#87afd7"))));
+            Add(2111, new AnsiColor("XTerm111", 111, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#87afff"))));
+            Add(2112, new AnsiColor("XTerm112", 112, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#87d700"))));
+            Add(2113, new AnsiColor("XTerm113", 113, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#87d75f"))));
+            Add(2114, new AnsiColor("XTerm114", 114, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#87d787"))));
+            Add(2115, new AnsiColor("XTerm115", 115, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#87d7af"))));
+            Add(2116, new AnsiColor("XTerm116", 116, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#87d7d7"))));
+            Add(2117, new AnsiColor("XTerm117", 117, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#87d7ff"))));
+            Add(2118, new AnsiColor("XTerm118", 118, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#87ff00"))));
+            Add(2119, new AnsiColor("XTerm119", 119, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#87ff5f"))));
+            Add(2120, new AnsiColor("XTerm120", 120, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#87ff87"))));
+            Add(2121, new AnsiColor("XTerm121", 121, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#87ffaf"))));
+            Add(2122, new AnsiColor("XTerm122", 122, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#87ffd7"))));
+            Add(2123, new AnsiColor("XTerm123", 123, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#87ffff"))));
+            Add(2124, new AnsiColor("XTerm124", 124, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#af0000"))));
+            Add(2125, new AnsiColor("XTerm125", 125, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#af005f"))));
+            Add(2126, new AnsiColor("XTerm126", 126, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#af0087"))));
+            Add(2127, new AnsiColor("XTerm127", 127, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#af00af"))));
+            Add(2128, new AnsiColor("XTerm128", 128, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#af00d7"))));
+            Add(2129, new AnsiColor("XTerm129", 129, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#af00ff"))));
+            Add(2130, new AnsiColor("XTerm130", 130, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#af5f00"))));
+            Add(2131, new AnsiColor("XTerm131", 131, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#af5f5f"))));
+            Add(2132, new AnsiColor("XTerm132", 132, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#af5f87"))));
+            Add(2133, new AnsiColor("XTerm133", 133, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#af5faf"))));
+            Add(2134, new AnsiColor("XTerm134", 134, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#af5fd7"))));
+            Add(2135, new AnsiColor("XTerm135", 135, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#af5fff"))));
+            Add(2136, new AnsiColor("XTerm136", 136, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#af8700"))));
+            Add(2137, new AnsiColor("XTerm137", 137, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#af875f"))));
+            Add(2138, new AnsiColor("XTerm138", 138, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#af8787"))));
+            Add(2139, new AnsiColor("XTerm139", 139, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#af87af"))));
+            Add(2140, new AnsiColor("XTerm140", 140, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#af87d7"))));
+            Add(2141, new AnsiColor("XTerm141", 141, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#af87ff"))));
+            Add(2142, new AnsiColor("XTerm142", 142, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#afaf00"))));
+            Add(2143, new AnsiColor("XTerm143", 143, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#afaf5f"))));
+            Add(2144, new AnsiColor("XTerm144", 144, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#afaf87"))));
+            Add(2145, new AnsiColor("XTerm145", 145, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#afafaf"))));
+            Add(2146, new AnsiColor("XTerm146", 146, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#afafd7"))));
+            Add(2147, new AnsiColor("XTerm147", 147, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#afafff"))));
+            Add(2148, new AnsiColor("XTerm148", 148, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#afd700"))));
+            Add(2149, new AnsiColor("XTerm149", 149, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#afd75f"))));
+            Add(2150, new AnsiColor("XTerm150", 150, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#afd787"))));
+            Add(2151, new AnsiColor("XTerm151", 151, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#afd7af"))));
+            Add(2152, new AnsiColor("XTerm152", 152, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#afd7d7"))));
+            Add(2153, new AnsiColor("XTerm153", 153, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#afd7ff"))));
+            Add(2154, new AnsiColor("XTerm154", 154, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#afff00"))));
+            Add(2155, new AnsiColor("XTerm155", 155, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#afff5f"))));
+            Add(2156, new AnsiColor("XTerm156", 156, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#afff87"))));
+            Add(2157, new AnsiColor("XTerm157", 157, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#afffaf"))));
+            Add(2158, new AnsiColor("XTerm158", 158, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#afffd7"))));
+            Add(2159, new AnsiColor("XTerm159", 159, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#afffff"))));
+            
+            //Xterm block 160-231
+            Add(2160, new AnsiColor("XTerm160", 160, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#d70000"))));
+            Add(2161, new AnsiColor("XTerm161", 161, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#d7005f"))));
+            Add(2162, new AnsiColor("XTerm162", 162, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#d70087"))));
+            Add(2163, new AnsiColor("XTerm163", 163, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#d700af"))));
+            Add(2164, new AnsiColor("XTerm164", 164, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#d700d7"))));
+            Add(2165, new AnsiColor("XTerm165", 165, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#d700ff"))));
+            Add(2166, new AnsiColor("XTerm166", 166, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#d75f00"))));
+            Add(2167, new AnsiColor("XTerm167", 167, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#d75f5f"))));
+            Add(2168, new AnsiColor("XTerm168", 168, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#d75f87"))));
+            Add(2169, new AnsiColor("XTerm169", 169, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#d75faf"))));
+            Add(2170, new AnsiColor("XTerm170", 170, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#d75fd7"))));
+            Add(2171, new AnsiColor("XTerm171", 171, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#d75fff"))));
+            Add(2172, new AnsiColor("XTerm172", 172, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#d78700"))));
+            Add(2173, new AnsiColor("XTerm173", 173, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#d7875f"))));
+            Add(2174, new AnsiColor("XTerm174", 174, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#d78787"))));
+            Add(2175, new AnsiColor("XTerm175", 175, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#d787af"))));
+            Add(2176, new AnsiColor("XTerm176", 176, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#d787d7"))));
+            Add(2177, new AnsiColor("XTerm177", 177, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#d787ff"))));
+            Add(2178, new AnsiColor("XTerm178", 178, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#dfaf00"))));
+            Add(2179, new AnsiColor("XTerm179", 179, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#dfaf5f"))));
+            Add(2180, new AnsiColor("XTerm180", 180, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#dfaf87"))));
+            Add(2181, new AnsiColor("XTerm181", 181, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#dfafaf"))));
+            Add(2182, new AnsiColor("XTerm182", 182, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#dfafdf"))));
+            Add(2183, new AnsiColor("XTerm183", 183, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#dfafff"))));
+            Add(2184, new AnsiColor("XTerm184", 184, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#dfdf00"))));
+            Add(2185, new AnsiColor("XTerm185", 185, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#dfdf5f"))));
+            Add(2186, new AnsiColor("XTerm186", 186, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#dfdf87"))));
+            Add(2187, new AnsiColor("XTerm187", 187, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#dfdfaf"))));
+            Add(2188, new AnsiColor("XTerm188", 188, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#dfdfdf"))));
+            Add(2189, new AnsiColor("XTerm189", 189, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#dfdfff"))));
+            Add(2190, new AnsiColor("XTerm190", 190, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#dfff00"))));
+            Add(2191, new AnsiColor("XTerm191", 191, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#dfff5f"))));
+            Add(2192, new AnsiColor("XTerm192", 192, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#dfff87"))));
+            Add(2193, new AnsiColor("XTerm193", 193, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#dfffaf"))));
+            Add(2194, new AnsiColor("XTerm194", 194, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#dfffdf"))));
+            Add(2195, new AnsiColor("XTerm195", 195, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#dfffff"))));
+            Add(2196, new AnsiColor("XTerm196", 196, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#ff0000"))));
+            Add(2197, new AnsiColor("XTerm197", 197, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#ff005f"))));
+            Add(2198, new AnsiColor("XTerm198", 198, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#ff0087"))));
+            Add(2199, new AnsiColor("XTerm199", 199, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#ff00af"))));
+            Add(2200, new AnsiColor("XTerm200", 200, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#ff00df"))));
+            Add(2201, new AnsiColor("XTerm201", 201, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#ff00ff"))));
+            Add(2202, new AnsiColor("XTerm202", 202, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#ff5f00"))));
+            Add(2203, new AnsiColor("XTerm203", 203, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#ff5f5f"))));
+            Add(2204, new AnsiColor("XTerm204", 204, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#ff5f87"))));
+            Add(2205, new AnsiColor("XTerm205", 205, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#ff5faf"))));
+            Add(2206, new AnsiColor("XTerm206", 206, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#ff5fdf"))));
+            Add(2207, new AnsiColor("XTerm207", 207, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#ff5fff"))));
+            Add(2208, new AnsiColor("XTerm208", 208, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#ff8700"))));
+            Add(2209, new AnsiColor("XTerm209", 209, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#ff875f"))));
+            Add(2210, new AnsiColor("XTerm210", 210, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#ff8787"))));
+            Add(2211, new AnsiColor("XTerm211", 211, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#ff87af"))));
+            Add(2212, new AnsiColor("XTerm212", 212, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#ff87df"))));
+            Add(2213, new AnsiColor("XTerm213", 213, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#ff87ff"))));
+            Add(2214, new AnsiColor("XTerm214", 214, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#ffaf00"))));
+            Add(2215, new AnsiColor("XTerm215", 215, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#ffaf5f"))));
+            Add(2216, new AnsiColor("XTerm216", 216, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#ffaf87"))));
+            Add(2217, new AnsiColor("XTerm217", 217, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#ffafaf"))));
+            Add(2218, new AnsiColor("XTerm218", 218, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#ffafdf"))));
+            Add(2219, new AnsiColor("XTerm219", 219, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#ffafff"))));
+            Add(2220, new AnsiColor("XTerm220", 220, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#ffdf00"))));
+            Add(2221, new AnsiColor("XTerm221", 221, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#ffdf5f"))));
+            Add(2222, new AnsiColor("XTerm222", 222, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#ffdf87"))));
+            Add(2223, new AnsiColor("XTerm223", 223, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#ffdfaf"))));
+            Add(2224, new AnsiColor("XTerm224", 224, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#ffdfdf"))));
+            Add(2225, new AnsiColor("XTerm225", 225, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#ffdfff"))));
+            Add(2226, new AnsiColor("XTerm226", 226, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#ffff00"))));
+            Add(2227, new AnsiColor("XTerm227", 227, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#ffff5f"))));
+            Add(2228, new AnsiColor("XTerm228", 228, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#ffff87"))));
+            Add(2229, new AnsiColor("XTerm229", 229, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#ffffaf"))));
+            Add(2230, new AnsiColor("XTerm230", 230, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#ffffdf"))));
+            Add(2231, new AnsiColor("XTerm231", 231, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#ffffff"))));
+            
+            //Last block for gray scale
+            Add(2232, new AnsiColor("XTerm232", 232, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#080808"))));
+            Add(2233, new AnsiColor("XTerm233", 233, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#121212"))));
+            Add(2234, new AnsiColor("XTerm234", 234, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#1c1c1c"))));
+            Add(2235, new AnsiColor("XTerm235", 235, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#262626"))));
+            Add(2236, new AnsiColor("XTerm236", 236, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#303030"))));
+            Add(2237, new AnsiColor("XTerm237", 237, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#3a3a3a"))));
+            Add(2238, new AnsiColor("XTerm238", 238, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#444444"))));
+            Add(2239, new AnsiColor("XTerm239", 239, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#4e4e4e"))));
+            Add(2240, new AnsiColor("XTerm240", 240, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#585858"))));
+            Add(2241, new AnsiColor("XTerm241", 241, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#626262"))));
+            Add(2242, new AnsiColor("XTerm242", 242, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#6c6c6c"))));
+            Add(2243, new AnsiColor("XTerm243", 243, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#767676"))));
+            Add(2244, new AnsiColor("XTerm244", 244, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#808080"))));
+            Add(2245, new AnsiColor("XTerm245", 245, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#8a8a8a"))));
+            Add(2246, new AnsiColor("XTerm246", 246, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#949494"))));
+            Add(2247, new AnsiColor("XTerm247", 247, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#9e9e9e"))));
+            Add(2248, new AnsiColor("XTerm248", 248, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#a8a8a8"))));
+            Add(2259, new AnsiColor("XTerm249", 249, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#b2b2b2"))));
+            Add(2250, new AnsiColor("XTerm250", 250, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#bcbcbc"))));
+            Add(2251, new AnsiColor("XTerm251", 251, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#c6c6c6"))));
+            Add(2252, new AnsiColor("XTerm252", 252, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#d0d0d0"))));
+            Add(2253, new AnsiColor("XTerm253", 253, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#dadada"))));
+            Add(2254, new AnsiColor("XTerm254", 254, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#e4e4e4"))));
+            Add(2255, new AnsiColor("XTerm255", 255, false, (SolidColorBrush)(new BrushConverter().ConvertFrom("#eeeeee"))));
+
+
+        }
+    }   
+}
